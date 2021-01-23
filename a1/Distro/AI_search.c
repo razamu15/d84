@@ -44,9 +44,87 @@
 
 #include "AI_search.h"
 
+
+/* lines 49 to 111; queue implementation taken from https://www.geeksforgeeks.org/queue-linked-list-implementation/ */
+struct QNode { 
+    int x; 
+	int y;
+    struct QNode* next; 
+}; 
+  
+// The queue, front stores the front node of LL and rear stores the 
+// last node of LL 
+struct Queue { 
+    struct QNode *front, *rear; 
+}; 
+  
+// A utility function to create a new linked list node. 
+struct QNode* QnewNode(int k) 
+{ 
+    struct QNode* temp = (struct QNode*)malloc(sizeof(struct QNode)); 
+    temp->key = k; 
+    temp->next = NULL; 
+    return temp; 
+} 
+  
+// A utility function to create an empty queue 
+struct Queue* createQ() 
+{ 
+    struct Queue* q = (struct Queue*)malloc(sizeof(struct Queue)); 
+    q->front = q->rear = NULL; 
+    return q; 
+} 
+  
+// The function to add a key k to q 
+void enQ(struct Queue* q, int k) 
+{ 
+    // Create a new LL node 
+    struct QNode* temp = newNode(k); 
+  
+    // If queue is empty, then new node is front and rear both 
+    if (q->rear == NULL) { 
+        q->front = q->rear = temp; 
+        return; 
+    } 
+  
+    // Add the new node at the end of queue and change rear 
+    q->rear->next = temp; 
+    q->rear = temp; 
+} 
+  
+// Function to remove a key from given queue q 
+struct QNode* deQ(struct Queue* q) 
+{ 
+    // If queue is empty, return NULL. 
+    if (q->front == NULL) 
+        return; 
+  
+    // Store previous front and move front one node ahead 
+    struct QNode* result = q->front; 
+  
+    q->front = q->front->next; 
+    // If front becomes NULL, then change rear also as NULL 
+    if (q->front == NULL) 
+        q->rear = NULL; 
+  
+    return(result); 
+} 
+
+void bfs(double gr[graph_size][4], int path[graph_size][2], int visit_order[size_X][size_Y], int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, int mouse_loc[1][2]){
+	// create and enqueue the mouse's location
+	struct Queue* q = createQueue();
+
+	
+
+	// set predecessor of the mouse node to indicate the start
+
+	// loop through the queue
+
+}
+
 void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[size_X][size_Y], int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, int mouse_loc[1][2], int mode, int (*heuristic)(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, double gr[graph_size][4]))
 {
- /*
+	/*
    This function is the interface between your solution for the assignment and the driver code. The driver code
    in AI_search_core_GL will call this function once per frame, and provide the following data
    
@@ -170,7 +248,7 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
 		That's that, now, implement your solution!
  */
 
- /********************************************************************************************************
+	/********************************************************************************************************
  * 
  * TO DO:	Implement code to carry out the different types of search depending on the
  *		mode.
@@ -193,19 +271,28 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
  *
  ********************************************************************************************************/
 
- // Stub so that the code compiles/runs - The code below will be removed and replaced by your code!
+	// Stub so that the code compiles/runs - The code below will be removed and replaced by your code!
 
- path[0][0]=mouse_loc[0][0];
- path[0][1]=mouse_loc[0][1];
- path[1][0]=mouse_loc[0][0];
- path[1][1]=mouse_loc[0][1];
+	path[0][0] = mouse_loc[0][0];
+	path[0][1] = mouse_loc[0][1];
+	path[1][0] = mouse_loc[0][0];
+	path[1][1] = mouse_loc[0][1];
 
- return;
+	// call the right function based on the mode
+	if (mode == 0){
+		bfs(gr, path, visit_order, cat_loc, cats, cheese_loc, cheeses, mouse_loc);
+	} else if (mode == 1){
+		dfs(gr, path, visit_order, cat_loc, cats, cheese_loc, cheeses, mouse_loc);
+    } else if (mode == 2){
+    	a_star(gr, path, visit_order, cat_loc, cats, cheese_loc, cheeses, mouse_loc, *heuristic);
+    }
+
+	return;
 }
 
 int H_cost(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, double gr[graph_size][4])
 {
- /*
+	/*
 	This function computes and returns the heuristic cost for location x,y.
 	As discussed in lecture, this means estimating the cost of getting from x,y to the goal. 
 	The goal is cheese. Which cheese is up to you.
@@ -224,12 +311,12 @@ int H_cost(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int mouse_lo
 		These arguments are as described in the search() function above
  */
 
- return(1);		// <-- Evidently you will need to update this.
+	return (1); // <-- Evidently you will need to update this.
 }
 
 int H_cost_nokitty(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, double gr[graph_size][4])
 {
- /*
+	/*
 	This function computes and returns the heuristic cost for location x,y.
 	As discussed in lecture, this means estimating the cost of getting from x,y to the goal. 
 	The goal is cheese. 
@@ -244,6 +331,5 @@ int H_cost_nokitty(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int 
 	Input arguments have the same meaning as in the H_cost() function above.
  */
 
- return(1);		// <-- Evidently you will need to update this.
+	return (1); // <-- Evidently you will need to update this.
 }
-
