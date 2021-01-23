@@ -59,10 +59,11 @@ struct Queue {
 }; 
   
 // A utility function to create a new linked list node. 
-struct QNode* QnewNode(int k) 
+struct QNode* QnewNode(int x, int y) 
 { 
     struct QNode* temp = (struct QNode*)malloc(sizeof(struct QNode)); 
-    temp->key = k; 
+    temp->x = x;
+	temp->y = y; 
     temp->next = NULL; 
     return temp; 
 } 
@@ -76,10 +77,10 @@ struct Queue* createQ()
 } 
   
 // The function to add a key k to q 
-void enQ(struct Queue* q, int k) 
+void enQ(struct Queue*q, int x, int y) 
 { 
     // Create a new LL node 
-    struct QNode* temp = newNode(k); 
+    struct QNode* temp = newNode(x, y); 
   
     // If queue is empty, then new node is front and rear both 
     if (q->rear == NULL) { 
@@ -112,7 +113,7 @@ struct QNode* deQ(struct Queue* q)
 
 void bfs(double gr[graph_size][4], int path[graph_size][2], int visit_order[size_X][size_Y], int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, int mouse_loc[1][2]){
 	// create and enqueue the mouse's location
-	struct Queue* q = createQueue();
+	struct Queue* Q = createQueue();
 
 	
 
