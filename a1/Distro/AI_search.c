@@ -134,12 +134,71 @@ int cheese_exists(int cheese_loc[10][2], int cheeses, int x, int y){
 void bfs(double gr[graph_size][4], int path[graph_size][2], int visit_order[size_X][size_Y], int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, int mouse_loc[1][2]){
 	// create and enqueue the mouse's location
 	struct Queue* Q = createQueue();
+	enQ(Q, mouse_loc[0][0], mouse_loc[0][1]);
 
-	
+	// create the predecessros array and set ii all to -1
+	int predecessors[graph_size];
+	int i;
+	for(i = 0; i < graph_size; i++){
+		predecessors[i] = -1;
+	}
 
-	// set predecessor of the mouse node to indicate the start
+	// declare variables for the loop
+	int order_counter = 1;
+	struct QNode* cur_node;
+	int child_index;
+	int current_index;
+	int cheese_index[2];
 
 	// loop through the queue
+	while (Q->front != NULL) {
+		// dequeue the next node
+		cur_node = deQ(Q);
+		current_index = cur_node->x + (cur_node->y)*32;
+		// mark node as visited and set its predecessor
+		visit_order[cur_node->x][cur_node->y] = order_counter;
+		order_counter++;
+
+		// now go through the 4 children and add them to the queue if they qualify
+
+		// top neighbour
+		child_index = cur_node->x + (cur_node->y-1)*32;
+		if ( (gr[child_index][0] == 1) && (predecessors[child_index] == -1) && (cat_exists(cat_loc, cats, cur_node->x, (cur_node->y-1)) == 0) ) {
+			predecessors[child_index] = current_index;
+			enQ(Q, cur_node->x, (cur_node->y-1));
+		} 
+
+		// right neighbour
+		child_index = cur_node->x+1 + (cur_node->y)*32;
+		if ( (gr[child_index][0] == 1) && (predecessors[child_index] == -1) && (cat_exists(cat_loc, cats, cur_node->x+1, (cur_node->y)) == 0) ) {
+			predecessors[child_index] = current_index;
+			enQ(Q, cur_node->x+1, (cur_node->y));
+		} 
+
+		// bottom neighbour
+		child_index = cur_node->x + (cur_node->y+1)*32;
+		if ( (gr[child_index][0] == 1) && (predecessors[child_index] == -1) && (cat_exists(cat_loc, cats, cur_node->x, (cur_node->y+1)) == 0) ) {
+			predecessors[child_index] = current_index;
+			enQ(Q, cur_node->x, (cur_node->y+1));
+		} 
+		
+		// left neighbour
+		child_index = cur_node->x-1 + (cur_node->y)*32;
+		if ( (gr[child_index][0] == 1) && (predecessors[child_index] == -1) && (cat_exists(cat_loc, cats, cur_node->x-1, (cur_node->y)) == 0) ) {
+			predecessors[child_index] = current_index;
+			enQ(Q, cur_node->x-1, (cur_node->y));
+		} 
+
+		// check if the current node is a cheese node
+		if ( cheese_exists(cheese_loc, cheeses, cur_node->x, cur_node->y) == 1 ) {
+			// this is a cheese node so we dont need to do anything else break out of the loop
+			cheese_index[0] = cur_node->x;
+			cheese_index[1] = cur_node->y;
+		}
+	}
+
+	// now build the path in reverse from the cheese to the start index
+	
 
 }
 
@@ -303,9 +362,9 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
 	if (mode == 0){
 		bfs(gr, path, visit_order, cat_loc, cats, cheese_loc, cheeses, mouse_loc);
 	} else if (mode == 1){
-		dfs(gr, path, visit_order, cat_loc, cats, cheese_loc, cheeses, mouse_loc);
+		//dfs(gr, path, visit_order, cat_loc, cats, cheese_loc, cheeses, mouse_loc);
     } else if (mode == 2){
-    	a_star(gr, path, visit_order, cat_loc, cats, cheese_loc, cheeses, mouse_loc, *heuristic);
+    	//a_star(gr, path, visit_order, cat_loc, cats, cheese_loc, cheeses, mouse_loc, *heuristic);
     }
 
 	return;
