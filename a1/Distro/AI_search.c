@@ -515,20 +515,23 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
 	}
 	else if (mode == 2)
 	{
-		//  implement A* here
+		//  implementing A* here
 
-		// create the predecessros array and set ii all to -1
-		int predecessors[graph_size];
+		// create the predecessros array and include cost to get to predecessor in the second index 
+		// set it all to -1 and 0 respectively
+		int predecessors[graph_size][2];
 		int i;
 		for (i = 0; i < graph_size; i++)
 		{
-			predecessors[i] = -1;
+			predecessors[i][0] = -1;
+			predecessors[i][1] = 0;
 		}
 
 		// create and enqueue the mouse's location
 		struct Queue *Q = createQ();
 		enQ(Q, mouse_loc[0][0], mouse_loc[0][1]);
-		predecessors[mouse_loc[0][0] + (mouse_loc[0][1] * size_X)] = mouse_loc[0][0] + (mouse_loc[0][1] * size_X);
+		predecessors[mouse_loc[0][0] + (mouse_loc[0][1] * size_X)][0] = mouse_loc[0][0] + (mouse_loc[0][1] * size_X);
+		predecessors[mouse_loc[0][0] + (mouse_loc[0][1] * size_X)][1] = 0;
 
 		// declare variables for the loop
 		int order_counter = 1;
@@ -562,33 +565,33 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
 
 			// top neighbour
 			child_index = cur_node->x + ((cur_node->y - 1) * size_X);
-			if ((gr[current_index][0] == 1.0) && ((predecessors[child_index] == -1) && (cat_exists(cat_loc, cats, cur_node->x, (cur_node->y - 1)) == 0)))
-			{
-				predecessors[child_index] = current_index;
+			if ((gr[current_index][0] == 1.0) && ((predecessors[child_index] == -1) && (cat_exists(cat_loc, cats, cur_node->x, (cur_node->y - 1)) == 0))) {
+				predecessors[child_index][0] = current_index;
+				predecessors[child_index][1] = predecessors[current_index][1] + 1;
 				enQ(Q, cur_node->x, (cur_node->y - 1));
 			}
 
 			// right neighbour
 			child_index = (cur_node->x + 1) + ((cur_node->y) * size_X);
-			if ((gr[current_index][1] == 1.0) && ((predecessors[child_index] == -1) && (cat_exists(cat_loc, cats, cur_node->x + 1, (cur_node->y)) == 0)))
-			{
-				predecessors[child_index] = current_index;
+			if ((gr[current_index][1] == 1.0) && ((predecessors[child_index] == -1) && (cat_exists(cat_loc, cats, cur_node->x + 1, (cur_node->y)) == 0))) {
+				predecessors[child_index][0] = current_index;
+				predecessors[child_index][1] = predecessors[current_index][1] + 1;
 				enQ(Q, cur_node->x + 1, (cur_node->y));
 			}
 
 			// bottom neighbour
 			child_index = cur_node->x + ((cur_node->y + 1) * size_X);
-			if ((gr[current_index][2] == 1.0) && ((predecessors[child_index] == -1) && (cat_exists(cat_loc, cats, cur_node->x, (cur_node->y + 1)) == 0)))
-			{
-				predecessors[child_index] = current_index;
+			if ((gr[current_index][2] == 1.0) && ((predecessors[child_index] == -1) && (cat_exists(cat_loc, cats, cur_node->x, (cur_node->y + 1)) == 0))) {
+				predecessors[child_index][0] = current_index;
+				predecessors[child_index][1] = predecessors[current_index][1] + 1;
 				enQ(Q, cur_node->x, (cur_node->y + 1));
 			}
 
 			// left neighbour
 			child_index = (cur_node->x - 1) + (cur_node->y) * 32;
-			if ((gr[current_index][3] == 1.0) && ((predecessors[child_index] == -1) && (cat_exists(cat_loc, cats, cur_node->x - 1, (cur_node->y)) == 0)))
-			{
-				predecessors[child_index] = current_index;
+			if ((gr[current_index][3] == 1.0) && ((predecessors[child_index] == -1) && (cat_exists(cat_loc, cats, cur_node->x - 1, (cur_node->y)) == 0))) {
+				predecessors[child_index][0] = current_index;
+				predecessors[child_index][1] = predecessors[current_index][1] + 1;
 				enQ(Q, cur_node->x - 1, (cur_node->y));
 			}
 
