@@ -565,7 +565,7 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
 
 			// top neighbour
 			child_index = cur_node->x + ((cur_node->y - 1) * size_X);
-			if ((gr[current_index][0] == 1.0) && ((predecessors[child_index] == -1) && (cat_exists(cat_loc, cats, cur_node->x, (cur_node->y - 1)) == 0))) {
+			if ((gr[current_index][0] == 1.0) && ((predecessors[child_index][0] == -1) && (cat_exists(cat_loc, cats, cur_node->x, (cur_node->y - 1)) == 0))) {
 				predecessors[child_index][0] = current_index;
 				predecessors[child_index][1] = predecessors[current_index][1] + 1;
 				enQ(Q, cur_node->x, (cur_node->y - 1));
@@ -573,7 +573,7 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
 
 			// right neighbour
 			child_index = (cur_node->x + 1) + ((cur_node->y) * size_X);
-			if ((gr[current_index][1] == 1.0) && ((predecessors[child_index] == -1) && (cat_exists(cat_loc, cats, cur_node->x + 1, (cur_node->y)) == 0))) {
+			if ((gr[current_index][1] == 1.0) && ((predecessors[child_index][0] == -1) && (cat_exists(cat_loc, cats, cur_node->x + 1, (cur_node->y)) == 0))) {
 				predecessors[child_index][0] = current_index;
 				predecessors[child_index][1] = predecessors[current_index][1] + 1;
 				enQ(Q, cur_node->x + 1, (cur_node->y));
@@ -581,7 +581,7 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
 
 			// bottom neighbour
 			child_index = cur_node->x + ((cur_node->y + 1) * size_X);
-			if ((gr[current_index][2] == 1.0) && ((predecessors[child_index] == -1) && (cat_exists(cat_loc, cats, cur_node->x, (cur_node->y + 1)) == 0))) {
+			if ((gr[current_index][2] == 1.0) && ((predecessors[child_index][0] == -1) && (cat_exists(cat_loc, cats, cur_node->x, (cur_node->y + 1)) == 0))) {
 				predecessors[child_index][0] = current_index;
 				predecessors[child_index][1] = predecessors[current_index][1] + 1;
 				enQ(Q, cur_node->x, (cur_node->y + 1));
@@ -589,7 +589,7 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
 
 			// left neighbour
 			child_index = (cur_node->x - 1) + (cur_node->y) * 32;
-			if ((gr[current_index][3] == 1.0) && ((predecessors[child_index] == -1) && (cat_exists(cat_loc, cats, cur_node->x - 1, (cur_node->y)) == 0))) {
+			if ((gr[current_index][3] == 1.0) && ((predecessors[child_index][0] == -1) && (cat_exists(cat_loc, cats, cur_node->x - 1, (cur_node->y)) == 0))) {
 				predecessors[child_index][0] = current_index;
 				predecessors[child_index][1] = predecessors[current_index][1] + 1;
 				enQ(Q, cur_node->x - 1, (cur_node->y));
@@ -606,7 +606,7 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
 		// first loop to build the path backwards
 		while (reverse_path[counter] != mouse)
 		{
-			reverse_path[counter + 1] = predecessors[reverse_path[counter]];
+			reverse_path[counter + 1] = predecessors[reverse_path[counter]][0];
 			counter++;
 		}
 		// second loop to flip the reverse path and change from linear index to coordinates along the way
