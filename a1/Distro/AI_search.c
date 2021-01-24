@@ -111,6 +111,26 @@ struct QNode* deQ(struct Queue* q)
     return(result); 
 } 
 
+int cat_exists(int cat_loc[10][2], int cats, int x, int y){
+	int i;
+	for(i = 0; i < cats; i++){
+		if((cat_loc[i][0] == x) && (cat_loc[i][1] == y)){	
+			return 1;
+		}
+	}
+	return 0;
+}
+
+int cheese_exists(int cheese_loc[10][2], int cheeses, int x, int y){
+	int i;
+	for(i = 0; i < cheeses; i++){
+		if((cheese_loc[i][0] == x) && (cheese_loc[i][1] == y)){	
+			return 1;
+		}
+	}
+	return 0;
+}
+
 void bfs(double gr[graph_size][4], int path[graph_size][2], int visit_order[size_X][size_Y], int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, int mouse_loc[1][2]){
 	// create and enqueue the mouse's location
 	struct Queue* Q = createQueue();
