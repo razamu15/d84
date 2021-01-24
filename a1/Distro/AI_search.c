@@ -135,7 +135,7 @@ void push(struct Stack *s, int x, int y)
 	s->top = temp;
 }
 
-struct Node *pop(struct Stack *s){
+struct Node *pop(struct Stack *s) {
 	if (s->top == NULL) {
 		return (NULL);
 	} else {
@@ -147,10 +147,8 @@ struct Node *pop(struct Stack *s){
 
 int cat_exists(int cat_loc[10][2], int cats, int x, int y) {
 	int i;
-	for (i = 0; i < cats; i++)
-	{
-		if ((cat_loc[i][0] == x) && (cat_loc[i][1] == y))
-		{
+	for (i = 0; i < cats; i++) {
+		if ((cat_loc[i][0] == x) && (cat_loc[i][1] == y)) {
 			return 1;
 		}
 	}
@@ -159,10 +157,8 @@ int cat_exists(int cat_loc[10][2], int cats, int x, int y) {
 
 int cheese_exists(int cheese_loc[10][2], int cheeses, int x, int y) {
 	int i;
-	for (i = 0; i < cheeses; i++)
-	{
-		if ((cheese_loc[i][0] == x) && (cheese_loc[i][1] == y))
-		{
+	for (i = 0; i < cheeses; i++) {
+		if ((cheese_loc[i][0] == x) && (cheese_loc[i][1] == y)) {
 			return 1;
 		}
 	}
@@ -180,7 +176,7 @@ void bfs(double gr[graph_size][4], int path[graph_size][2], int visit_order[size
 	// create and enqueue the mouse's location
 	struct Queue *Q = createQ();
 	enQ(Q, mouse_loc[0][0], mouse_loc[0][1]);
-	predecessors[mouse_loc[0][0] + (mouse_loc[0][1]*size_X)] = mouse_loc[0][0] + (mouse_loc[0][1]*size_X);
+	predecessors[mouse_loc[0][0] + (mouse_loc[0][1] * size_X)] = mouse_loc[0][0] + (mouse_loc[0][1] * size_X);
 
 	// declare variables for the loop
 	int order_counter = 1;
@@ -218,7 +214,7 @@ void bfs(double gr[graph_size][4], int path[graph_size][2], int visit_order[size
 		}
 
 		// right neighbour
-		child_index = (cur_node->x +1) + ((cur_node->y) * size_X);
+		child_index = (cur_node->x + 1) + ((cur_node->y) * size_X);
 		if ((gr[current_index][1] == 1.0) && ((predecessors[child_index] == -1) && (cat_exists(cat_loc, cats, cur_node->x + 1, (cur_node->y)) == 0))) {
 			predecessors[child_index] = current_index;
 			enQ(Q, cur_node->x + 1, (cur_node->y));
@@ -243,19 +239,19 @@ void bfs(double gr[graph_size][4], int path[graph_size][2], int visit_order[size
 
 	// now build the path in reverse from the cheese to the mouse
 	int reverse_path[graph_size];
-	int mouse = mouse_loc[0][0] + mouse_loc[0][1]*32;
+	int mouse = mouse_loc[0][0] + mouse_loc[0][1] * 32;
 	int counter = 0;
-	reverse_path[0] = cheese_index[0] + cheese_index[1]*32;
+	reverse_path[0] = cheese_index[0] + cheese_index[1] * 32;
 	// first loop to build the path backwards
-	while(reverse_path[counter] != mouse){
-		reverse_path[counter+1] = predecessors[reverse_path[counter]];
+	while (reverse_path[counter] != mouse) {
+		reverse_path[counter + 1] = predecessors[reverse_path[counter]];
 		counter++;
 	}
 	// second loop to flip the reverse path and change from linear index to coordinates along the way
 	int j = 0;
-	for(counter; counter >= 0; counter--){
-		path[j][0]=reverse_path[counter] % size_X;
-		path[j][1]=reverse_path[counter] / size_X;
+	for (counter; counter >= 0; counter--) {
+		path[j][0] = reverse_path[counter] % size_X;
+		path[j][1] = reverse_path[counter] / size_X;
 		j++;
 	}
 	return;
@@ -272,7 +268,7 @@ void dfs(double gr[graph_size][4], int path[graph_size][2], int visit_order[size
 	// create and enqueue the mouse's location
 	struct Stack *stack = createStack();
 	push(stack, mouse_loc[0][0], mouse_loc[0][1]);
-	predecessors[mouse_loc[0][0] + (mouse_loc[0][1]*size_X)] = mouse_loc[0][0] + (mouse_loc[0][1]*size_X);
+	predecessors[mouse_loc[0][0] + (mouse_loc[0][1] * size_X)] = mouse_loc[0][0] + (mouse_loc[0][1] * size_X);
 
 	// declare variables for the loop
 	int order_counter = 1;
@@ -282,8 +278,7 @@ void dfs(double gr[graph_size][4], int path[graph_size][2], int visit_order[size
 	int cheese_index[2] = {-99, -99};
 
 	// loop through the queue
-	while (cheese_index[0] == -99)
-	{
+	while (cheese_index[0] == -99) {
 		// dequeue the next node
 		cur_node = pop(stack);
 		if (cur_node == NULL) {
@@ -310,7 +305,7 @@ void dfs(double gr[graph_size][4], int path[graph_size][2], int visit_order[size
 		}
 
 		// right neighbour
-		child_index = (cur_node->x +1) + ((cur_node->y) * size_X);
+		child_index = (cur_node->x + 1) + ((cur_node->y) * size_X);
 		if ((gr[current_index][1] == 1.0) && ((predecessors[child_index] == -1) && (cat_exists(cat_loc, cats, cur_node->x + 1, (cur_node->y)) == 0))) {
 			predecessors[child_index] = current_index;
 			push(stack, cur_node->x + 1, (cur_node->y));
@@ -335,25 +330,23 @@ void dfs(double gr[graph_size][4], int path[graph_size][2], int visit_order[size
 
 	// now build the path in reverse from the cheese to the mouse
 	int reverse_path[graph_size];
-	int mouse = mouse_loc[0][0] + mouse_loc[0][1]*32;
+	int mouse = mouse_loc[0][0] + mouse_loc[0][1] * 32;
 	int counter = 0;
-	reverse_path[0] = cheese_index[0] + cheese_index[1]*32;
+	reverse_path[0] = cheese_index[0] + cheese_index[1] * 32;
 	// first loop to build the path backwards
-	while(reverse_path[counter] != mouse){
-		reverse_path[counter+1] = predecessors[reverse_path[counter]];
+	while (reverse_path[counter] != mouse) {
+		reverse_path[counter + 1] = predecessors[reverse_path[counter]];
 		counter++;
 	}
 	// second loop to flip the reverse path and change from linear index to coordinates along the way
 	int j = 0;
-	for(counter; counter >= 0; counter--){
-		path[j][0]=reverse_path[counter] % size_X;
-		path[j][1]=reverse_path[counter] / size_X;
+	for (counter; counter >= 0; counter--) {
+		path[j][0] = reverse_path[counter] % size_X;
+		path[j][1] = reverse_path[counter] / size_X;
 		j++;
 	}
 	return;
 }
-
-
 
 void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[size_X][size_Y], int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, int mouse_loc[1][2], int mode, int (*heuristic)(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, double gr[graph_size][4]))
 {
@@ -522,7 +515,106 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
 	}
 	else if (mode == 2)
 	{
-		//a_star(gr, path, visit_order, cat_loc, cats, cheese_loc, cheeses, mouse_loc, *heuristic);
+		//  implement A* here
+
+		// create the predecessros array and set ii all to -1
+		int predecessors[graph_size];
+		int i;
+		for (i = 0; i < graph_size; i++)
+		{
+			predecessors[i] = -1;
+		}
+
+		// create and enqueue the mouse's location
+		struct Queue *Q = createQ();
+		enQ(Q, mouse_loc[0][0], mouse_loc[0][1]);
+		predecessors[mouse_loc[0][0] + (mouse_loc[0][1] * size_X)] = mouse_loc[0][0] + (mouse_loc[0][1] * size_X);
+
+		// declare variables for the loop
+		int order_counter = 1;
+		struct Node *cur_node;
+		int child_index;
+		int current_index = 0;
+		int cheese_index[2] = {-99, -99};
+
+		// loop through the queue
+		while (cheese_index[0] == -99)
+		{
+			// dequeue the next node
+			cur_node = deQ(Q);
+			if (cur_node == NULL)
+			{
+				break;
+			}
+
+			// check if the current node is a cheese node
+			if (cheese_exists(cheese_loc, cheeses, cur_node->x, cur_node->y) == 1)
+			{
+				cheese_index[0] = cur_node->x;
+				cheese_index[1] = cur_node->y;
+			}
+
+			current_index = cur_node->x + ((cur_node->y) * size_X);
+			// mark node as visited and set its predecessor
+			visit_order[cur_node->x][cur_node->y] = order_counter;
+			order_counter++;
+			// now go through the 4 children and add them to the queue if they qualify
+
+			// top neighbour
+			child_index = cur_node->x + ((cur_node->y - 1) * size_X);
+			if ((gr[current_index][0] == 1.0) && ((predecessors[child_index] == -1) && (cat_exists(cat_loc, cats, cur_node->x, (cur_node->y - 1)) == 0)))
+			{
+				predecessors[child_index] = current_index;
+				enQ(Q, cur_node->x, (cur_node->y - 1));
+			}
+
+			// right neighbour
+			child_index = (cur_node->x + 1) + ((cur_node->y) * size_X);
+			if ((gr[current_index][1] == 1.0) && ((predecessors[child_index] == -1) && (cat_exists(cat_loc, cats, cur_node->x + 1, (cur_node->y)) == 0)))
+			{
+				predecessors[child_index] = current_index;
+				enQ(Q, cur_node->x + 1, (cur_node->y));
+			}
+
+			// bottom neighbour
+			child_index = cur_node->x + ((cur_node->y + 1) * size_X);
+			if ((gr[current_index][2] == 1.0) && ((predecessors[child_index] == -1) && (cat_exists(cat_loc, cats, cur_node->x, (cur_node->y + 1)) == 0)))
+			{
+				predecessors[child_index] = current_index;
+				enQ(Q, cur_node->x, (cur_node->y + 1));
+			}
+
+			// left neighbour
+			child_index = (cur_node->x - 1) + (cur_node->y) * 32;
+			if ((gr[current_index][3] == 1.0) && ((predecessors[child_index] == -1) && (cat_exists(cat_loc, cats, cur_node->x - 1, (cur_node->y)) == 0)))
+			{
+				predecessors[child_index] = current_index;
+				enQ(Q, cur_node->x - 1, (cur_node->y));
+			}
+
+			free(cur_node);
+		}
+
+		// now build the path in reverse from the cheese to the mouse
+		int reverse_path[graph_size];
+		int mouse = mouse_loc[0][0] + mouse_loc[0][1] * 32;
+		int counter = 0;
+		reverse_path[0] = cheese_index[0] + cheese_index[1] * 32;
+		// first loop to build the path backwards
+		while (reverse_path[counter] != mouse)
+		{
+			reverse_path[counter + 1] = predecessors[reverse_path[counter]];
+			counter++;
+		}
+		// second loop to flip the reverse path and change from linear index to coordinates along the way
+		int j = 0;
+		for (counter; counter >= 0; counter--)
+		{
+			path[j][0] = reverse_path[counter] % size_X;
+			path[j][1] = reverse_path[counter] / size_X;
+			j++;
+		}
+		return;
 	}
 
 	return;
