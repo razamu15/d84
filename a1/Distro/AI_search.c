@@ -45,24 +45,24 @@
 #include "AI_search.h"
 
 /* lines 49 to 115; queue implementation taken from https://www.geeksforgeeks.org/queue-linked-list-implementation/ */
-struct QNode
+struct Node
 {
 	int x;
 	int y;
-	struct QNode *next;
+	struct Node *next;
 };
 
 // The queue, front stores the front node of LL and rear stores the
 // last node of LL
 struct Queue
 {
-	struct QNode *front, *rear;
+	struct Node *front, *rear;
 };
 
 // A utility function to create a new linked list node.
-struct QNode *QnewNode(int x, int y)
+struct Node *newNode(int x, int y)
 {
-	struct QNode *temp = (struct QNode *)malloc(sizeof(struct QNode));
+	struct Node *temp = (struct Node *)malloc(sizeof(struct Node));
 	temp->x = x;
 	temp->y = y;
 	temp->next = NULL;
@@ -81,7 +81,7 @@ struct Queue *createQ()
 void enQ(struct Queue *q, int x, int y)
 {
 	// Create a new LL node
-	struct QNode *temp = QnewNode(x, y);
+	struct Node *temp = newNode(x, y);
 
 	// If queue is empty, then new node is front and rear both
 	if (q->rear == NULL)
@@ -96,14 +96,14 @@ void enQ(struct Queue *q, int x, int y)
 }
 
 // Function to remove a key from given queue q
-struct QNode *deQ(struct Queue *q)
+struct Node *deQ(struct Queue *q)
 {
 	// If queue is empty, return NULL.
 	if (q->front == NULL)
 		return (NULL);
 
 	// Store previous front and move front one node ahead
-	struct QNode *result = q->front;
+	struct Node *result = q->front;
 
 	// free(q->front);
 	q->front = q->front->next;
@@ -113,6 +113,36 @@ struct QNode *deQ(struct Queue *q)
 
 	return (result);
 }
+
+struct Stack
+{
+	struct Node *top;
+};
+
+struct Stack *createStack()
+{
+	struct Stack *s = (struct Stack *)malloc(sizeof(struct Stack));
+	s->top = NULL;
+	return s;
+}
+
+void push(struct Stack *s, int x, int y)
+{
+	// Create a new LL node
+	struct Node *temp = newNode(x, y);
+	temp->next = s->top;
+	s->top = temp;
+}
+
+struct Node *pop(struct Stack *s){
+	if (s->top == NULL) {
+		return (NULL);
+	} else {
+		struct Node *result = s->top;
+		s->top = s->top->next;
+		return (result);
+	}
+};
 
 int cat_exists(int cat_loc[10][2], int cats, int x, int y) {
 	int i;
@@ -138,8 +168,7 @@ int cheese_exists(int cheese_loc[10][2], int cheeses, int x, int y) {
 	return 0;
 }
 
-void bfs(double gr[graph_size][4], int path[graph_size][2], int visit_order[size_X][size_Y], int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, int mouse_loc[1][2])
-{
+void bfs(double gr[graph_size][4], int path[graph_size][2], int visit_order[size_X][size_Y], int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, int mouse_loc[1][2]) {
 	// create the predecessros array and set ii all to -1
 	int predecessors[graph_size];
 	int i;
@@ -154,7 +183,7 @@ void bfs(double gr[graph_size][4], int path[graph_size][2], int visit_order[size
 
 	// declare variables for the loop
 	int order_counter = 1;
-	struct QNode *cur_node;
+	struct Node *cur_node;
 	int child_index;
 	int current_index = 0;
 	int cheese_index[2] = {-99, -99};
