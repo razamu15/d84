@@ -593,16 +593,16 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
  
 		// Create a Priority Queue 
 		// 7->4->5->6 
-		struct PQNode* pq = newPQNode(4, 1); 
-		PQpush(&pq, 5, 2); 
-		PQpush(&pq, 6, 3); 
-		PQpush(&pq, 7, 0);
+		// struct PQNode* pq = newPQNode(4, 1); 
+		// PQpush(&pq, 5, 2); 
+		// PQpush(&pq, 6, 3); 
+		// PQpush(&pq, 7, 0);
 	
-		while (!isEmpty(&pq)) { 
-			printf("%d ", peek(&pq)); 
-			PQpop(&pq); 
-		} 
-		printf("end");
+		// while (!isEmpty(&pq)) { 
+		// 	printf("%d ", peek(&pq)); 
+		// 	PQpop(&pq); 
+		// } 
+		// printf("end");
 
 
 		// create the predecessros array and include cost to get to predecessor in the second index 
