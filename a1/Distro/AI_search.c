@@ -620,7 +620,14 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
 		// while (order_counter < 11) {
 
 			// get the next node index
-			current_index = peek(&pq);
+			if (!isEmpty(&pq)) {
+				current_index = peek(&pq);	
+			} else {
+				return;
+			}
+			
+			
+			
 			// now set the goal's pri to negative to make sure it remains up top so that it gets poped at the end of the loop
 			pq->priority = -1;
 			cur_x = current_index % size_X;
@@ -738,7 +745,6 @@ int H_cost(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int mouse_lo
 		}
 	}
 	return (distance); 
-	// return (1);
 }
 
 int H_cost_nokitty(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, double gr[graph_size][4])
@@ -758,5 +764,43 @@ int H_cost_nokitty(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int 
 	Input arguments have the same meaning as in the H_cost() function above.
  */
 
-	return (1); // <-- Evidently you will need to update this.
+	//find the closest cat to each cheese
+	int cheeses_cat_cost[10];
+	int i,j;
+	int cheese_cost;
+	int distance = 0;
+	// each cheese
+	for (i=0; i < cheeses; i++) {
+		// if there is a cat within a 5 block radius of this cheese add 100 for each cat
+		// closest cat to this cheese
+		cheese_cost = 0;
+		for (j= 0; j < cats; j++) {
+			// in x range
+			if ( cheese_loc[i][0] - 5 < cat_loc[j][0] && cat_loc[j][0] < cheese_loc[i][0] + 5 ) {
+				// in y range
+				if( cheese_loc[i][1] - 5 < cat_loc[j][1] && cat_loc[j][1] < cheese_loc[i][1] + 5 ) {
+					cheese_cost += 500;
+				}
+			} 
+		}
+		cheeses_cat_cost[i] = cheese_cost;
+	}
+
+	// find the distance of each cheese to the mouse
+	int mouse_cheeses_dist[10];
+	for (i=0; i < cheeses; i++) {
+		mouse_cheeses_dist[i] = sqrt(pow(x - cheese_loc[i][0], 2) + pow(y - cheese_loc[i][1], 2));
+	}
+
+	// int result[] = {0, 1024};
+	int result = 1024;
+	// loop through the set of lists to find the lowest pair of cheese to mouse and cat to cheese distance
+	for (i = 0; i < cheeses; i++) {
+		if ( cheeses_cat_cost[i] + mouse_cheeses_dist[i] < result) {
+			result = cheeses_cat_cost[i] + mouse_cheeses_dist[i];
+		}
+	}
+	return result;
+
+	// return (result[0]); // <-- Evidently you will need to update this.
 }
