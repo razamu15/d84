@@ -348,6 +348,80 @@ void dfs(double gr[graph_size][4], int path[graph_size][2], int visit_order[size
 	return;
 }
 
+
+struct PQNode { 
+    int data; 
+ 
+    // Lower values indicate higher priority 
+    int priority; 
+    struct PQNode* next;
+}; 
+ 
+// Function to Create A New Node 
+struct PQNode* newPQNode(int d, int p) 
+{ 
+    struct PQNode* temp =(struct PQNode*)malloc(sizeof(struct PQNode)); 
+    temp->data = d; 
+    temp->priority = p; 
+    temp->next = NULL; 
+ 
+    return temp; 
+} 
+ 
+// Return the value at head 
+int peek(struct PQNode** head) 
+{ 
+    return (*head)->data; 
+} 
+ 
+// Removes the element with the 
+// highest priority form the list 
+void PQpop(struct PQNode** head) 
+{ 
+    struct PQNode* temp = *head; 
+    (*head) = (*head)->next; 
+    free(temp); 
+} 
+ 
+// Function to push according to priority 
+void PQpush(struct PQNode** head, int d, int p) 
+{ 
+    struct PQNode* start = (*head); 
+ 
+    // Create new Node 
+    struct PQNode* temp = newPQNode(d, p); 
+ 
+    // Special Case: The head of list has lesser 
+    // priority than new node. So insert new 
+    // node before head node and change head node. 
+    if ((*head)->priority > p) { 
+ 
+        // Insert New Node before head 
+        temp->next = *head; 
+        (*head) = temp; 
+    } 
+    else { 
+ 
+        // Traverse the list and find a 
+        // position to insert new node 
+        while (start->next != NULL && start->next->priority < p) { 
+            start = start->next; 
+        } 
+ 
+        // Either at the ends of the list 
+        // or at required position 
+        temp->next = start->next; 
+        start->next = temp; 
+    } 
+} 
+ 
+// Function to check is list is empty 
+int isEmpty(struct PQNode** head) 
+{ 
+    return (*head) == NULL; 
+} 
+
+
 void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[size_X][size_Y], int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, int mouse_loc[1][2], int mode, int (*heuristic)(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, double gr[graph_size][4]))
 {
 	/*
@@ -516,6 +590,20 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
 	else if (mode == 2)
 	{
 		//  implementing A* here
+ 
+		// Create a Priority Queue 
+		// 7->4->5->6 
+		struct PQNode* pq = newPQNode(4, 1); 
+		PQpush(&pq, 5, 2); 
+		PQpush(&pq, 6, 3); 
+		PQpush(&pq, 7, 0);
+	
+		while (!isEmpty(&pq)) { 
+			printf("%d ", peek(&pq)); 
+			PQpop(&pq); 
+		} 
+		printf("end");
+
 
 		// create the predecessros array and include cost to get to predecessor in the second index 
 		// set it all to -1 and 0 respectively
