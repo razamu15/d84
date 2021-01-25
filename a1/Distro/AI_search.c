@@ -404,7 +404,7 @@ void PQpush(struct PQNode** head, int d, int p)
  
         // Traverse the list and find a 
         // position to insert new node 
-        while (start->next != NULL && start->next->priority < p) { 
+        while (start->next != NULL && start->next->priority <= p) { 
             start = start->next; 
         } 
  
@@ -617,9 +617,12 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
 
 		// loop through the queue
 		while (cheese_index[0] == -99) {
+		// while (order_counter < 11) {
 
 			// get the next node index
 			current_index = peek(&pq);
+			// now set the goal's pri to negative to make sure it remains up top so that it gets poped at the end of the loop
+			pq->priority = -1;
 			cur_x = current_index % size_X;
 			cur_y = current_index / size_Y;
 
@@ -634,21 +637,12 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
 			order_counter++;
 			// now go through the 4 children and add them to the queue if they qualify
 
-			// top neighbour
-			child_index = cur_x + ((cur_y - 1) * size_X);
-			if ((gr[current_index][0] == 1.0) && ((predecessors[child_index][0] == -1) && (cat_exists(cat_loc, cats, cur_x, (cur_y - 1)) == 0))) {
+			// left neighbour
+			child_index = (cur_x - 1) + (cur_y) * 32;
+			if ((gr[current_index][3] == 1.0) && ((predecessors[child_index][0] == -1) && (cat_exists(cat_loc, cats, cur_x - 1, (cur_y)) == 0))) {
 				predecessors[child_index][0] = current_index;
 				predecessors[child_index][1] = predecessors[current_index][1] + 1;
-				h = heuristic(cur_x, (cur_y - 1), cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr);
-				PQpush(&pq, child_index, predecessors[child_index][1] + h);
-			}
-
-			// right neighbour
-			child_index = (cur_x + 1) + ((cur_y) * size_X);
-			if ((gr[current_index][1] == 1.0) && ((predecessors[child_index][0] == -1) && (cat_exists(cat_loc, cats, cur_x + 1, (cur_y)) == 0))) {
-				predecessors[child_index][0] = current_index;
-				predecessors[child_index][1] = predecessors[current_index][1] + 1;
-				h = heuristic(cur_x + 1, cur_y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr);
+				h = heuristic(cur_x, (cur_y + 1), cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr);
 				PQpush(&pq, child_index, predecessors[child_index][1] + h);
 			}
 
@@ -661,17 +655,28 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
 				PQpush(&pq, child_index, predecessors[child_index][1] + h);
 			}
 
-			// left neighbour
-			child_index = (cur_x - 1) + (cur_y) * 32;
-			if ((gr[current_index][3] == 1.0) && ((predecessors[child_index][0] == -1) && (cat_exists(cat_loc, cats, cur_x - 1, (cur_y)) == 0))) {
+			// right neighbour
+			child_index = (cur_x + 1) + ((cur_y) * size_X);
+			if ((gr[current_index][1] == 1.0) && ((predecessors[child_index][0] == -1) && (cat_exists(cat_loc, cats, cur_x + 1, (cur_y)) == 0))) {
 				predecessors[child_index][0] = current_index;
 				predecessors[child_index][1] = predecessors[current_index][1] + 1;
-				h = heuristic(cur_x, (cur_y + 1), cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr);
+				h = heuristic(cur_x + 1, cur_y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr);
+				PQpush(&pq, child_index, predecessors[child_index][1] + h);
+			}
+
+			// top neighbour
+			child_index = cur_x + ((cur_y - 1) * size_X);
+			if ((gr[current_index][0] == 1.0) && ((predecessors[child_index][0] == -1) && (cat_exists(cat_loc, cats, cur_x, (cur_y - 1)) == 0))) {
+				predecessors[child_index][0] = current_index;
+				predecessors[child_index][1] = predecessors[current_index][1] + 1;
+				h = heuristic(cur_x, (cur_y - 1), cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr);
 				PQpush(&pq, child_index, predecessors[child_index][1] + h);
 			}
 
 			PQpop(&pq);
 		}
+
+		
 
 		// // now build the path in reverse from the cheese to the mouse
 		int reverse_path[graph_size];
@@ -726,26 +731,14 @@ int H_cost(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int mouse_lo
 	for (i=0; i < cheeses; i++) {
 		x_dif = x - cheese_loc[i][0];
 		y_dif = y - cheese_loc[i][1];
-		new_distance = sqrt(pow(x_dif, 2) + pow(y_dif, 2));
+		new_distance = abs(x_dif) + abs(y_dif);
+		// new_distance = sqrt(pow(x_dif, 2) + pow(y_dif, 2));
 		if (new_distance < distance) {
 			distance = new_distance;
 		}
 	}
-	return (distance); // <-- Evidently you will need to update this.
-	
-	// int heuristics[cheeses];
-    // int i;
-	// int min;
-	// for (i = 0; i < cheeses; i++){
-	// 	heuristics[i] = sqrt((cheese_loc[i][0] - x) * (cheese_loc[i][0] - x) + (cheese_loc[i][1] - y) * (cheese_loc[i][1] - y));
-	// 	if (i == 0){
-	// 		min = heuristics[i];
-	// 	}
-	// 	if (heuristics[i] < min){
-	// 		min = heuristics[i];
-	// 	}
-	// }
- 	// return min; // <-- Evidently you will need to update this.
+	return (distance); 
+	// return (1);
 }
 
 int H_cost_nokitty(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, double gr[graph_size][4])
