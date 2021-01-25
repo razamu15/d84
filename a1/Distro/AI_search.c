@@ -348,7 +348,8 @@ void dfs(double gr[graph_size][4], int path[graph_size][2], int visit_order[size
 	return;
 }
 
-
+/* lines 352 - 421 are a priority queue implementation taken from 
+https://www.geeksforgeeks.org/priority-queue-using-linked-list/#:~:text=Priority%20Queues%20can%20be%20implemented,lists%2C%20heaps%20and%20binary%20trees.&text=The%20list%20is%20so%20created,elements%20based%20on%20their%20priority.*/
 struct PQNode
 { 
     int data;
@@ -665,6 +666,7 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
 			if ((gr[current_index][3] == 1.0) && ((predecessors[child_index][0] == -1) && (cat_exists(cat_loc, cats, cur_x - 1, (cur_y)) == 0))) {
 				predecessors[child_index][0] = current_index;
 				predecessors[child_index][1] = predecessors[current_index][1] + 1;
+				h = heuristic(cur_x, (cur_y + 1), cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr);
 				PQpush(&pq, child_index, predecessors[child_index][1] + h);
 			}
 
@@ -696,8 +698,7 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
 	return;
 }
 
-int H_cost(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, double gr[graph_size][4])
-{
+int H_cost(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, double gr[graph_size][4]) {
 	/*
 	This function computes and returns the heuristic cost for location x,y.
 	As discussed in lecture, this means estimating the cost of getting from x,y to the goal. 
@@ -715,9 +716,36 @@ int H_cost(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int mouse_lo
 		gr - The graph's adjacency list for the maze
 
 		These arguments are as described in the search() function above
- */
+ 	*/
 
-	return (1); // <-- Evidently you will need to update this.
+ 	//find the euclidian distance to the closest cheese. since the ecclidean distance is the diagonal between 2 points
+	//it will definitely be shorter than the actual path
+	int i, new_distance;
+	int distance = 1024;
+	int x_dif, y_dif;
+	for (i=0; i < cheeses; i++) {
+		x_dif = x - cheese_loc[i][0];
+		y_dif = y - cheese_loc[i][1];
+		new_distance = sqrt(pow(x_dif, 2) + pow(y_dif, 2));
+		if (new_distance < distance) {
+			distance = new_distance;
+		}
+	}
+	return (distance); // <-- Evidently you will need to update this.
+	
+	// int heuristics[cheeses];
+    // int i;
+	// int min;
+	// for (i = 0; i < cheeses; i++){
+	// 	heuristics[i] = sqrt((cheese_loc[i][0] - x) * (cheese_loc[i][0] - x) + (cheese_loc[i][1] - y) * (cheese_loc[i][1] - y));
+	// 	if (i == 0){
+	// 		min = heuristics[i];
+	// 	}
+	// 	if (heuristics[i] < min){
+	// 		min = heuristics[i];
+	// 	}
+	// }
+ 	// return min; // <-- Evidently you will need to update this.
 }
 
 int H_cost_nokitty(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, double gr[graph_size][4])
