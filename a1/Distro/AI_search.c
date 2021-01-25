@@ -27,18 +27,18 @@
 /**********************************************************************
 % COMPLETE THIS TEXT BOX:
 %
-% 1) Student Name:		
+% 1) Student Name:	Muhammad Saad Raza	
 % 2) Student Name:		
 %
-% 1) Student number:
+% 1) Student number: 1004257127
 % 2) Student number:
 % 
-% 1) UtorID
+% 1) UtorID: razamu15
 % 2) UtorID
 % 
 % We hereby certify that the work contained here is our own
 %
-% ____________________             _____________________
+% _Muhammad_Saad_Raza__             _____________________
 % (sign with your name)            (sign with your name)
 ***********************************************************************/
 
@@ -623,6 +623,7 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
 			if (!isEmpty(&pq)) {
 				current_index = peek(&pq);	
 			} else {
+				// current_index = mouse_loc[0][0] + mouse_loc[0][1] * 32;
 				return;
 			}
 			
