@@ -589,20 +589,6 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
 	else if (mode == 2)
 	{
 		//  implementing A* here
- 
-		// Create a Priority Queue 
-		// 7->4->5->6 
-		// struct PQNode* pq = newPQNode(4, 1); 
-		// PQpush(&pq, 5, 2); 
-		// PQpush(&pq, 6, 3); 
-		// PQpush(&pq, 7, 0);
-	
-		// while (!isEmpty(&pq)) { 
-		// 	printf("%d ", peek(&pq)); 
-		// 	PQpop(&pq); 
-		// } 
-		// printf("end");
-
 
 		// create the predecessros array and include cost to get to predecessor in the second index 
 		// set it all to -1 and 0 respectively
@@ -623,7 +609,7 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
 
 		// declare variables for the loop
 		int order_counter = 1;
-		int cur_x, cur_y;
+		int cur_x, cur_y, h;
 		int child_index;
 		int current_index = 0;
 		int cheese_index[2] = {-99, -99};
@@ -643,7 +629,7 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
 			}
 
 			// mark node as visited and set its predecessor
-			visit_order[cur_x][cur_x] = order_counter;
+			visit_order[cur_x][cur_y] = order_counter;
 			order_counter++;
 			// now go through the 4 children and add them to the queue if they qualify
 
@@ -652,10 +638,8 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
 			if ((gr[current_index][0] == 1.0) && ((predecessors[child_index][0] == -1) && (cat_exists(cat_loc, cats, cur_x, (cur_y - 1)) == 0))) {
 				predecessors[child_index][0] = current_index;
 				predecessors[child_index][1] = predecessors[current_index][1] + 1;
-				//h = heuristic(cur_x, (cur_y - 1), cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr);
-				PQpush(&pq, child_index, predecessors[child_index][1] + 1);
-				// enPQ(PQ, h, cur_x, (cur_y - 1));
-				// enQ(Q, cur_x, (cur_y - 1));
+				h = heuristic(cur_x, (cur_y - 1), cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr);
+				PQpush(&pq, child_index, predecessors[child_index][1] + h);
 			}
 
 			// right neighbour
@@ -663,11 +647,8 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
 			if ((gr[current_index][1] == 1.0) && ((predecessors[child_index][0] == -1) && (cat_exists(cat_loc, cats, cur_x + 1, (cur_y)) == 0))) {
 				predecessors[child_index][0] = current_index;
 				predecessors[child_index][1] = predecessors[current_index][1] + 1;
-				//h = heuristic(cur_x + 1, cur_y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr);
-				//enPQ(&PQ, predecessors[child_index][1] + h, cur_x + 1, (cur_y));
-				// enPQ(PQ, h, cur_x + 1, (cur_y));
-				// enQ(Q, cur_x + 1, (cur_y));
-				PQpush(&pq, child_index, predecessors[child_index][1] + 1);
+				h = heuristic(cur_x + 1, cur_y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr);
+				PQpush(&pq, child_index, predecessors[child_index][1] + h);
 			}
 
 			// bottom neighbour
@@ -675,11 +656,8 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
 			if ((gr[current_index][2] == 1.0) && ((predecessors[child_index][0] == -1) && (cat_exists(cat_loc, cats, cur_x, (cur_y + 1)) == 0))) {
 				predecessors[child_index][0] = current_index;
 				predecessors[child_index][1] = predecessors[current_index][1] + 1;
-				//h = heuristic(cur_x, (cur_y + 1), cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr);
-				//enPQ(&PQ, predecessors[child_index][1] + h, cur_x, (cur_y + 1));
-				// enPQ(PQ, h, cur_x, (cur_y + 1));
-				// enQ(Q, cur_x, (cur_y + 1));
-				PQpush(&pq, child_index, predecessors[child_index][1] + 1);
+				h = heuristic(cur_x, (cur_y + 1), cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr);
+				PQpush(&pq, child_index, predecessors[child_index][1] + h);
 			}
 
 			// left neighbour
@@ -687,14 +665,9 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
 			if ((gr[current_index][3] == 1.0) && ((predecessors[child_index][0] == -1) && (cat_exists(cat_loc, cats, cur_x - 1, (cur_y)) == 0))) {
 				predecessors[child_index][0] = current_index;
 				predecessors[child_index][1] = predecessors[current_index][1] + 1;
-				//h = heuristic(cur_x - 1, cur_y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr);
-				//enPQ(&PQ, predecessors[child_index][1] + h, cur_x - 1, (cur_y));
-				// enPQ(PQ, h, cur_x - 1, (cur_y));
-				// enQ(Q, cur_x - 1, (cur_y));
-				PQpush(&pq, child_index, predecessors[child_index][1] + 1);
+				PQpush(&pq, child_index, predecessors[child_index][1] + h);
 			}
 
-			// free(cur_node);
 			PQpop(&pq);
 		}
 
