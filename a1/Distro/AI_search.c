@@ -44,112 +44,6 @@
 
 #include "AI_search.h"
 
-// Node 
-typedef struct PQNode { 
-    int x;
-	int y;
-    int priority; 
-    struct PQNode* next; 
-} PQNode; 
-
-struct PQueue {
-	struct PQNode *front, *rear;
-};
-
-// Function to Create A New Node 
-PQNode* newPQNode(int p, int x, int y)
-{ 
-    // PQNode* temp = (PQNode*)malloc(sizeof(PQNode)); 
-    // temp->x = x;
-	// temp->y = y; 
-    // temp->priority = p; 
-    // temp->next = NULL; 
- 
-    // return temp; 
-	struct PQNode* result = (struct PQNode *) malloc(sizeof(struct PQNode));
-	result->x = x;
-	result->y = y;
-	result->priority = p;
-	result->next = NULL;
-
-	return(result);
-} 
-
-struct PQueue *createPQ()
-{
-	struct PQueue *q = (struct PQueue *)malloc(sizeof(struct PQueue));
-	q->front = q->rear = NULL;
-	return q;
-}
-
- 
-// Removes the element with the 
-// highest priority form the list 
-PQNode *dePQ(PQNode** head) 
-{ 
-    PQNode* result = *head; 
-    (*head) = (*head)->next;
-    return(result); 
-}
- 
-// Function to push according to priority 
-// void enPQ(PQNode** head, int p, int x, int y) 
-// { 
-//     PQNode *start = *head; 
-//     // Create new Node 
-//     PQNode *temp = newPQNode(p, x, y); 
-
-//     // Special Case: The head of list has lesser 
-//     // priority than new node. So insert new 
-//     // node before head node and change head node. 
-    
-// 	if (start->priority > temp->priority) { 
-//         // Insert New Node before head 
-//         temp->next = *head; 
-//         *head = temp; 
-//     } else { 
-//         // Traverse the list and find a 
-//         // position to insert new node 
-//         while (start->next != NULL && start->next->priority < p) { 
-//             start = start->next; 
-//         } 
-//         // Either at the ends of the list 
-//         // or at required position 
-//         temp->next = start->next; 
-//         start->next = temp; 
-//     } 
-// }
-
-void enPQ(struct PQueue *PQ, int p, int x, int y){
-
-	struct PQNode* result = newPQNode(p, x, y);
-
-    if (PQ->front == NULL){
-        PQ->front = result;
-		return;
-	}
-
-	if (PQ->front->priority > result->priority){
-		// struct PQNode* temp = PQ->front;
-		printf("pqfront:%p pqfront->next:%p result:%p\n", PQ->front, PQ->front->next, result);
-		result->next = *(PQ->front);
-		printf("pqfront:%p pqfront->next:%p result:%p\n", PQ->front, PQ->front->next, result);
-		PQ->front = result;
-		//PQ->front->next = temp;
-	}
-	
-	struct PQNode* temp = PQ->front;
-
-	while(temp->next != NULL && result->priority > temp->next->priority){
-		temp = temp->next;
-	}
-	result->next = temp->next;
-	temp->next = result;
-
-	return;
-}
- 
-
 /* lines 49 to 115; queue implementation taken from https://www.geeksforgeeks.org/queue-linked-list-implementation/ 
    adaptions made to also make a stack work out of the same structures*/
 struct Node
@@ -633,48 +527,32 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
 			predecessors[i][1] = 0;
 		}
 
-		// create a PQ and enqueue the mouse's location
-		// PQNode* PQ = newPQNode(0, mouse_loc[0][0], mouse_loc[0][1]);
-		struct PQueue* PQ = createPQ();
-		// add current location on queue
-		enPQ(PQ, 7, mouse_loc[0][0],mouse_loc[0][1]);
-
+		// create and enqueue the mouse's location
+		struct Queue *Q = createQ();
+		enQ(Q, mouse_loc[0][0], mouse_loc[0][1]);
 		predecessors[mouse_loc[0][0] + (mouse_loc[0][1] * size_X)][0] = mouse_loc[0][0] + (mouse_loc[0][1] * size_X);
 		predecessors[mouse_loc[0][0] + (mouse_loc[0][1] * size_X)][1] = 0;
 
 		// declare variables for the loop
 		int order_counter = 1;
-		PQNode *cur_node;
+		struct Node *cur_node;
 		int child_index;
-		int h = 1;
 		int current_index = 0;
 		int cheese_index[2] = {-99, -99};
 
-		// path[0][0] = mouse_loc[0][0];
-		// path[0][1] = mouse_loc[0][1];
-		// path[1][0] = mouse_loc[0][0];
-		// path[1][1] = mouse_loc[0][1];
-		printf("start\n");
-		printf("pq x:%d y:%d pri:%d next:%p\n", PQ->front->x, PQ->front->y, PQ->front->priority, PQ->front->next);
-
-		enPQ(PQ, 1, 3,3);
-		enPQ(PQ, 0, 4,4);
-
-		printf("pq x:%d y:%d pri:%d next:%p\n", PQ->front->x, PQ->front->y, PQ->front->priority, PQ->front->next);
-		printf("pq x:%d y:%d pri:%d next:%p\n", PQ->front->next->x, PQ->front->next->y, PQ->front->next->priority, PQ->front->next->next);
-		printf("end\n");
 		// loop through the queue
-		// while (cheese_index[0] == -99) {
-		while (order_counter == 2) {
+		while (cheese_index[0] == -99)
+		{
 			// dequeue the next node
-			
-			// cur_node = dePQ(&PQ);
-			if (cur_node == NULL) {
+			cur_node = deQ(Q);
+			if (cur_node == NULL)
+			{
 				break;
 			}
 
 			// check if the current node is a cheese node
-			if (cheese_exists(cheese_loc, cheeses, cur_node->x, cur_node->y) == 1) {
+			if (cheese_exists(cheese_loc, cheeses, cur_node->x, cur_node->y) == 1)
+			{
 				cheese_index[0] = cur_node->x;
 				cheese_index[1] = cur_node->y;
 			}
@@ -692,7 +570,8 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
 				predecessors[child_index][1] = predecessors[current_index][1] + 1;
 				//h = heuristic(cur_node->x, (cur_node->y - 1), cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr);
 				//enPQ(&PQ, predecessors[child_index][1] + h, cur_node->x, (cur_node->y - 1));
-				enPQ(PQ, h, cur_node->x, (cur_node->y - 1));
+				// enPQ(PQ, h, cur_node->x, (cur_node->y - 1));
+				enQ(Q, cur_node->x, (cur_node->y - 1));
 			}
 
 			// right neighbour
@@ -702,7 +581,8 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
 				predecessors[child_index][1] = predecessors[current_index][1] + 1;
 				//h = heuristic(cur_node->x + 1, cur_node->y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr);
 				//enPQ(&PQ, predecessors[child_index][1] + h, cur_node->x + 1, (cur_node->y));
-				enPQ(PQ, h, cur_node->x + 1, (cur_node->y));
+				// enPQ(PQ, h, cur_node->x + 1, (cur_node->y));
+				enQ(Q, cur_node->x + 1, (cur_node->y));
 
 			}
 
@@ -713,7 +593,8 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
 				predecessors[child_index][1] = predecessors[current_index][1] + 1;
 				//h = heuristic(cur_node->x, (cur_node->y + 1), cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr);
 				//enPQ(&PQ, predecessors[child_index][1] + h, cur_node->x, (cur_node->y + 1));
-				enPQ(PQ, h, cur_node->x, (cur_node->y + 1));
+				// enPQ(PQ, h, cur_node->x, (cur_node->y + 1));
+				enQ(Q, cur_node->x, (cur_node->y + 1));
 			}
 
 			// left neighbour
@@ -723,32 +604,33 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
 				predecessors[child_index][1] = predecessors[current_index][1] + 1;
 				//h = heuristic(cur_node->x - 1, cur_node->y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr);
 				//enPQ(&PQ, predecessors[child_index][1] + h, cur_node->x - 1, (cur_node->y));
-				enPQ(PQ, h, cur_node->x - 1, (cur_node->y));
+				// enPQ(PQ, h, cur_node->x - 1, (cur_node->y));
+				enQ(Q, cur_node->x - 1, (cur_node->y));
 			}
 
-			// free(cur_node);
+			free(cur_node);
 		}
 
-		// // now build the path in reverse from the cheese to the mouse
-		// int reverse_path[graph_size];
-		// int mouse = mouse_loc[0][0] + mouse_loc[0][1] * 32;
-		// int counter = 0;
-		// reverse_path[0] = cheese_index[0] + cheese_index[1] * 32;
-		// // first loop to build the path backwards
-		// while (reverse_path[counter] != mouse)
-		// {
-		// 	reverse_path[counter + 1] = predecessors[reverse_path[counter]][0];
-		// 	counter++;
-		// }
-		// // second loop to flip the reverse path and change from linear index to coordinates along the way
-		// int j = 0;
-		// for (counter; counter >= 0; counter--)
-		// {
-		// 	path[j][0] = reverse_path[counter] % size_X;
-		// 	path[j][1] = reverse_path[counter] / size_X;
-		// 	j++;
-		// }
-		// return;
+		// now build the path in reverse from the cheese to the mouse
+		int reverse_path[graph_size];
+		int mouse = mouse_loc[0][0] + mouse_loc[0][1] * 32;
+		int counter = 0;
+		reverse_path[0] = cheese_index[0] + cheese_index[1] * 32;
+		// first loop to build the path backwards
+		while (reverse_path[counter] != mouse)
+		{
+			reverse_path[counter + 1] = predecessors[reverse_path[counter]][0];
+			counter++;
+		}
+		// second loop to flip the reverse path and change from linear index to coordinates along the way
+		int j = 0;
+		for (counter; counter >= 0; counter--)
+		{
+			path[j][0] = reverse_path[counter] % size_X;
+			path[j][1] = reverse_path[counter] / size_X;
+			j++;
+		}
+		return;
 	}
 
 	return;
