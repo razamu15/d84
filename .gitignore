@@ -1,3 +1,6 @@
 a1/exam/
 a1/Distro/AI_search.o
 a1/Distro/AI_search
+a2/Distro/MiniMax_search_core_GL.o
+a2/Distro/MiniMax_search.o
+a2/Distro/MiniMax_search
