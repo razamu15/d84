@@ -25,8 +25,7 @@
 
 #include "MiniMax_search.h"
 
-double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size_X][size_Y], int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, int mouse_loc[1][2], int mode, double (*utility)(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, int depth, double gr[graph_size][4]), int agentId, int depth, int maxDepth, double alpha, double beta)
-{
+double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size_X][size_Y], int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, int mouse_loc[1][2], int mode, double (*utility)(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, int depth, double gr[graph_size][4]), int agentId, int depth, int maxDepth, double alpha, double beta) {
  /*
    This function is the interface between your solution for the assignment and the driver code. The driver code
    in MiniMax_search_core_GL will call this function once per frame, and provide the following data
@@ -88,7 +87,8 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 		(*utility)(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, int depth, double gr[graph_size][4]);
 				- This is a pointer to the utility function which returns a value for a specific game configuration
 
-				   NOTE: Unlike the search assignment, this utility function also gets access to the graph so you can do any processing 					 that requires knowledge of the maze for computing the utility values.
+				   NOTE: Unlike the search assignment, this utility function also gets access to the graph so you can do any processing 
+				   that requires knowledge of the maze for computing the utility values.
 
 				  * How to call the utility function from within this function : *
 					- Like any other function:
@@ -158,11 +158,61 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
  path[0][0]=mouse_loc[0][0];
  path[0][1]=mouse_loc[0][1];
 
+	// so we need to do a limited depth BFS
+
+	// when this function is called, we are at root.
+		
+		// we need to store the locations of the cats, mouse (and the cheeses)
+		
+		// mouse tings
+			// we have a location for the mouse which is the root of the tree
+			// we need to get the utility values for each of the children of the mouse
+
+				// top child
+
+				// right child 
+
+				// bottom child 
+
+				// left child
+				
+				// we need to figure out what the cat would do if the mouse moved to each of these locations
+				// so to find out we need to
+					// update the mouse location to that specific child 
+					// call the minimax search on the cat. to call the next minimax search we need to
+						// calculate the next agentId
+						// increment the depth counter
+			
+			// once we have the utility value for each child 
+			// update the minmax_cost array for each of the children 
+			// we find the max utility cost among the children
+			// set the max utility child as the next optimal move
+			// return max utility cost
+		
+		// cat tings
+			// need to figure out which cat this function call was for
+			// once we know that, we need to get the utility for each child of THIS cat
+
+				// top
+				// right
+				// bottom
+				// left
+
+				// we need to figure out what the mouse would do if the cat moved to each of these locations
+				// so to find out we need to
+
+				//****BUT BEFORE WE CAN DO THAT WE NEED TO CALL MAYBE ANOTHER CAT I THINK, NEED TO THINK ABOUT THAT
+				
+					// update THIS cat's location to that specific child 
+					// call the minimax search on the mouse. to call the next minimax search we need to
+						// calculate the next agentId
+						// increment the depth counter
+
+
  return(0.0);
 }
 
-double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, int depth, double gr[graph_size][4])
-{
+double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, int depth, double gr[graph_size][4]) {
  /*
 	This function computes and returns the utility value for a given game configuration.
 	As discussed in lecture, this should return a positive value for configurations that are 'good'
@@ -184,11 +234,20 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 		These arguments are as described in A1. Do have a look at your solution!
  */
 
+	// the further the mouse if from the cats the better the position
+
+	// the closer the mouse is to the cheese the better the position
+
+	// first calculate the distance of the mouse to all the cheeses
+
+	// then calculate the distance of the mouse to all the cats
+
+	// find a function that gives a value combining the distance to the cats and the cheeses
+
  return(1);   // <--- Obviously, this will be replaced by your computer utilities
 }
 
-int checkForTerminal(int mouse_loc[1][2],int cat_loc[10][2],int cheese_loc[10][2],int cats,int cheeses)
-{
+int checkForTerminal(int mouse_loc[1][2],int cat_loc[10][2],int cheese_loc[10][2],int cats,int cheeses) {
  /* 
    This function determines whether a given configuration constitutes a terminal node.
    Terminal nodes are those for which:
