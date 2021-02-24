@@ -158,55 +158,126 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
  path[0][0]=mouse_loc[0][0];
  path[0][1]=mouse_loc[0][1];
 
-	// so we need to do a limited depth BFS
+	// so we need to do a limited depth BFS (chigao, DFS)
 
 	// when this function is called, we are at root.
+	
+	/* before we do anything, we need to check if this is a terminal node
 		
-		// we need to store the locations of the cats, mouse (and the cheeses)
+		check depth==maxDepth
 		
-		// mouse tings
-			// we have a location for the mouse which is the root of the tree
-			// we need to get the utility values for each of the children of the mouse
+		check overlap between mouse location and all cheeses
 
-				// top child
+		check overlap between mouse location and all cats*/
 
-				// right child 
+	// we need to store the locations of the cats, mouse (and the cheeses)
+	int local_mouse[2]  = mouse_loc[0];
+	int local_cats[10][2] = cat_loc;
+	// int local_cheeses[10][2] = cheese_loc;
 
-				// bottom child 
+	// delcare some vars
+	int children_utilities[4];
+	int location_index;
+	int return_utility;
+		
+	// mouse tings
+	if (agentId == 0) {
+		
+		// we have a location for the mouse which is the root of the tree
+		location_index = local_mouse[0] + (local_mouse[1] * size_X);
+		
+		// we need to get the utility values for each of the children of the mouse
+		// we need to figure out what the cat would do if the mouse moved to each of these locations
+			// so to find out we need to
+				// update the mouse location to that specific child 
+				// call the minimax search on the cat. to call the next minimax search we need to
+					// calculate the next agentId
+					// increment the depth counter
 
-				// left child
-				
-				// we need to figure out what the cat would do if the mouse moved to each of these locations
-				// so to find out we need to
-					// update the mouse location to that specific child 
-					// call the minimax search on the cat. to call the next minimax search we need to
-						// calculate the next agentId
-						// increment the depth counter
+		// check top child is connected in the maze
+		if (gr[location_index][0] == 1.0) {
+			// update the mouse location to its top neighbour
+
+			// call the minimax search on the cat. to call the next minimax search we need to
+				// calculate the next agentId
+				// increment the depth counter
+
+			// set the return value in the children_utilities array
+			children_utilities[0] = ;
+			// update the minmax_cost array with the utility for this child
+			minmax_cost[x][y] = children_utilities[0];
 			
-			// once we have the utility value for each child 
-			// update the minmax_cost array for each of the children 
-			// we find the max utility cost among the children
-			// set the max utility child as the next optimal move
-			// return max utility cost
+			// reset mouse location before the next if to allow the next child to process the right block
+				// maybe we dont need to do this if we set directly from local both x and y
+		}
+
+		// check right child is connected in the maze
+		if (gr[location_index][1] == 1.0) {
+			/* code */
+		}
+
+		// check bottom child is connected in the maze
+		if (gr[location_index][2] == 1.0) {
+			/* code */
+		}
+
+		// check left child is connected in the maze
+		if (gr[location_index][3] == 1.0) {
+			/* code */
+		}
 		
-		// cat tings
-			// need to figure out which cat this function call was for
-			// once we know that, we need to get the utility for each child of THIS cat
+		// we have the utility value for each child so now we need to find the max utility cost among the children
+		// set the max utility child as the next optimal move
 
-				// top
-				// right
-				// bottom
-				// left
+		// reset the state of the game that was changed for the recusive calls ie reset the mouse location
+		mouse_loc[0][0] = local_mouse[0];
+		mouse_loc[0][1] = local_mouse[1];
+		// return max utility cost
+		return(return_utility);
 
-				// we need to figure out what the mouse would do if the cat moved to each of these locations
-				// so to find out we need to
+	} 
+	else { // cat tings
+	
+		// need to figure out which cat this function call was for
+		int cat_index = agentId - 1;
+		int this_cat[2] = local_cats[cat_index]; // cat_loc[cat_index];
+		location_index = this_cat[0] + (this_cat[1] * size_X);
 
-				//****BUT BEFORE WE CAN DO THAT WE NEED TO CALL MAYBE ANOTHER CAT I THINK, NEED TO THINK ABOUT THAT
-				
-					// update THIS cat's location to that specific child 
-					// call the minimax search on the mouse. to call the next minimax search we need to
-						// calculate the next agentId
-						// increment the depth counter
+		// now we need to get the utility for each child of THIS cat
+		
+		// check top child is connected in the maze
+		if (gr[location_index][0] == 1.0) {
+			// update this cats location to its top neighbour
+			// x coord    cat_loc[cat_index][0] = ;
+			// y coord    cat_loc[cat_index][1] = ;
+
+			// call the minimax search on the cat. to call the next minimax search we need to
+				// calculate the next agentId
+				// increment the depth counter
+		}
+
+		// check right child is connected in the maze
+		if (gr[location_index][1] == 1.0) {
+			/* code */
+		}
+
+		// check bottom child is connected in the maze
+		if (gr[location_index][2] == 1.0) {
+			/* code */
+		}
+
+		// check left child is connected in the maze
+		if (gr[location_index][3] == 1.0) {
+			/* code */
+		}
+
+		// we need to figure out what the mouse would do if the cat moved to each of these locations
+		// so to find out we need to
+			// update THIS cat's location to that specific child 
+			// call the minimax search on the NEXT AGENT-ID. to call the next minimax search we need to
+				// calculate the next agentId
+				// increment the depth counter
+	}
 
 
  return(0.0);
