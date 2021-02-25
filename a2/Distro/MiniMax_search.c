@@ -170,12 +170,6 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 
 		check overlap between mouse location and all cats*/
 
-	// copy the value of the given mouses and cats to local variables and then we will send those local variables in the recursive calls
-	// int local_mouse[1][2];
-	// local_mouse[0][0]  = mouse_loc[0][0];
-	// local_mouse[0][1]  = mouse_loc[0][1];
-	int local_cats[10][2] = cat_loc;
-	// int local_cheeses[10][2] = cheese_loc;
 
 	// delcare some vars
 	double children_utilities[4]; // [top:0, right:1, bottom:2, left:3]
@@ -220,7 +214,7 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 			// call the next minimax search and set the return value in the children_utilities array
 			children_utilities[0] = MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, top_neighbour, mode, utility, agentId + 1, depth + 1, maxDepth, alpha, beta);
 			// update the minmax_cost array with the utility for this child
-			minmax_cost[top_neighbour[0][0]][top_neighbour[0][1]] = children_utilities[0];
+			// minmax_cost[top_neighbour[0][0]][top_neighbour[0][1]] = children_utilities[0];
 		}
 
 		// check right child is connected in the maze
@@ -228,7 +222,7 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 			// call the next minimax search and set the return value in the children_utilities array
 			children_utilities[1] = MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, right_neighbour, mode, utility, agentId + 1, depth + 1, maxDepth, alpha, beta);
 			// update the minmax_cost array with the utility for this child
-			minmax_cost[right_neighbour[0][0]][right_neighbour[0][1]] = children_utilities[1];
+			// minmax_cost[right_neighbour[0][0]][right_neighbour[0][1]] = children_utilities[1];
 		}
 
 		// check bottom child is connected in the maze
@@ -236,7 +230,7 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 			// call the next minimax search and set the return value in the children_utilities array
 			children_utilities[2] = MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, bottom_neighbour, mode, utility, agentId + 1, depth + 1, maxDepth, alpha, beta);
 			// update the minmax_cost array with the utility for this child
-			minmax_cost[bottom_neighbour[0][0]][bottom_neighbour[0][1]] = children_utilities[2];
+			// minmax_cost[bottom_neighbour[0][0]][bottom_neighbour[0][1]] = children_utilities[2];
 		}
 
 		// check left child is connected in the maze
@@ -244,7 +238,7 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 			// call the next minimax search and set the return value in the children_utilities array
 			children_utilities[3] = MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, left_neighbour, mode, utility, agentId + 1, depth + 1, maxDepth, alpha, beta);
 			// update the minmax_cost array with the utility for this child
-			minmax_cost[left_neighbour[0][0]][left_neighbour[0][1]] = children_utilities[3];
+			// minmax_cost[left_neighbour[0][0]][left_neighbour[0][1]] = children_utilities[3];
 		}
 		
 		// we have the utility value for each child so now we need to find the max utility cost among the children
@@ -260,21 +254,25 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 			// top neightbour is best option
 			path[0][0] = top_neighbour[0][0];
 			path[0][1] = top_neighbour[0][1];
+			minmax_cost[top_neighbour[0][0]][top_neighbour[0][1]] = children_utilities[max_index];
 		}
 		else if (max_index == 1) {
 			// right neightbour is best option
 			path[0][0] = right_neighbour[0][0];
 			path[0][1] = right_neighbour[0][1];
+			minmax_cost[right_neighbour[0][0]][right_neighbour[0][1]] = children_utilities[max_index];
 		}
 		else if (max_index == 2) {
 			// bottom neightbour is best option
 			path[0][0] = bottom_neighbour[0][0];
 			path[0][1] = bottom_neighbour[0][1];
+			minmax_cost[bottom_neighbour[0][0]][bottom_neighbour[0][1]] = children_utilities[max_index];
 		}
 		else if (max_index == 3) {
 			// left neightbour is best option
 			path[0][0] = left_neighbour[0][0];
 			path[0][1] = left_neighbour[0][1];
+			minmax_cost[left_neighbour[0][0]][left_neighbour[0][1]] = children_utilities[max_index];
 		}
 		
 		// return max utility cost
@@ -282,50 +280,71 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 
 	} 
 	else { // cat tings
+		// copy the cats given into local cats
+		int local_cats[10][2];
+		memcpy(local_cats, cat_loc, sizeof(int) * 10 * 2);
 	
 		// need to figure out which cat this function call was for
 		int cat_index = agentId - 1;
-		int this_cat[2] = local_cats[cat_index]; // cat_loc[cat_index];
-		location_index = this_cat[0] + (this_cat[1] * size_X);
-
-		// now we need to get the utility for each child of THIS cat
+		location_index = cat_loc[cat_index][0] + (cat_loc[cat_index][1] * size_X);
+		int next_agent_id = (agentId + 1) % (cats + 1);
 		
-		// check top child is connected in the maze
-		if (gr[location_index][0] == 1.0) {
-			// update this cats location to its top neighbour
-			// x coord    cat_loc[cat_index][0] = ;
-			// y coord    cat_loc[cat_index][1] = ;
-
-			// call the minimax search on the cat. to call the next minimax search we need to
-				// calculate the next agentId
-				// increment the depth counter
-		}
-
-		// check right child is connected in the maze
-		if (gr[location_index][1] == 1.0) {
-			/* code */
-		}
-
-		// check bottom child is connected in the maze
-		if (gr[location_index][2] == 1.0) {
-			/* code */
-		}
-
-		// check left child is connected in the maze
-		if (gr[location_index][3] == 1.0) {
-			/* code */
-		}
-
+		
+		// now we need to get the utility for each child of THIS cat
 		// we need to figure out what the mouse would do if the cat moved to each of these locations
 		// so to find out we need to
 			// update THIS cat's location to that specific child 
 			// call the minimax search on the NEXT AGENT-ID. to call the next minimax search we need to
 				// calculate the next agentId
 				// increment the depth counter
+		
+		// check top child is connected in the maze
+		if (gr[location_index][0] == 1.0) {
+			// update this cats location to its top neighbour
+			local_cats[cat_index][0] = cat_loc[cat_index][0];
+			local_cats[cat_index][1] = cat_loc[cat_index][1] - 1;
+			// call the next minimax search and set the return value in the children_utilities array
+			children_utilities[0] = MiniMax(gr, path, minmax_cost, local_cats, cats, cheese_loc, cheeses, mouse_loc, mode, utility, next_agent_id, depth + 1, maxDepth, alpha, beta);
+		}
+
+		// check right child is connected in the maze
+		if (gr[location_index][1] == 1.0) {
+			// update this cats location to its right neighbour
+			local_cats[cat_index][0] = cat_loc[cat_index][0] + 1;
+			local_cats[cat_index][1] = cat_loc[cat_index][1];
+			// call the next minimax search and set the return value in the children_utilities array
+			children_utilities[1] = MiniMax(gr, path, minmax_cost, local_cats, cats, cheese_loc, cheeses, mouse_loc, mode, utility, next_agent_id, depth + 1, maxDepth, alpha, beta);
+		}
+
+		// check bottom child is connected in the maze
+		if (gr[location_index][2] == 1.0) {
+			// update this cats location to its bottom neighbour
+			local_cats[cat_index][0] = cat_loc[cat_index][0];
+			local_cats[cat_index][1] = cat_loc[cat_index][1] + 1;
+			// call the next minimax search and set the return value in the children_utilities array
+			children_utilities[2] = MiniMax(gr, path, minmax_cost, local_cats, cats, cheese_loc, cheeses, mouse_loc, mode, utility, next_agent_id, depth + 1, maxDepth, alpha, beta);
+		}
+
+		// check left child is connected in the maze
+		if (gr[location_index][3] == 1.0) {
+			// update this cats location to its left neighbour
+			local_cats[cat_index][0] = cat_loc[cat_index][0] - 1;
+			local_cats[cat_index][1] = cat_loc[cat_index][1];
+			// call the next minimax search and set the return value in the children_utilities array
+			children_utilities[3] = MiniMax(gr, path, minmax_cost, local_cats, cats, cheese_loc, cheeses, mouse_loc, mode, utility, next_agent_id, depth + 1, maxDepth, alpha, beta);
+		}
+
+		// we have the utility value for each child so now we need to find the max utility cost among the children
+		int min_index = 0;
+		for (int x = 1; x < 4; x++){
+			if (children_utilities[min_index] < children_utilities[x]) {
+				min_index = x;
+			}
+		}
+
+		return(children_utilities[min_index]);
 	}
 
-
- return(0.0);
 }
 
 double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, int depth, double gr[graph_size][4]) {
