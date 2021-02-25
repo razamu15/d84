@@ -170,21 +170,42 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 
 		check overlap between mouse location and all cats*/
 
-	// we need to store the locations of the cats, mouse (and the cheeses)
-	int local_mouse[2]  = mouse_loc[0];
+	// copy the value of the given mouses and cats to local variables and then we will send those local variables in the recursive calls
+	// int local_mouse[1][2];
+	// local_mouse[0][0]  = mouse_loc[0][0];
+	// local_mouse[0][1]  = mouse_loc[0][1];
 	int local_cats[10][2] = cat_loc;
 	// int local_cheeses[10][2] = cheese_loc;
 
 	// delcare some vars
-	int children_utilities[4];
+	double children_utilities[4]; // [top:0, right:1, bottom:2, left:3]
 	int location_index;
-	int return_utility;
-		
+
+	int top_neighbour[1][2];
+	int right_neighbour[1][2];
+	int bottom_neighbour[1][2];
+	int left_neighbour[1][2];
+
 	// mouse tings
 	if (agentId == 0) {
 		
 		// we have a location for the mouse which is the root of the tree
-		location_index = local_mouse[0] + (local_mouse[1] * size_X);
+		location_index = mouse_loc[0][0] + (mouse_loc[0][1] * size_X);
+
+		//set the indexes of the children arrays
+		// top neighbour
+		top_neighbour[0][0] = mouse_loc[0][0]; // x coord 
+		top_neighbour[0][1] = mouse_loc[0][1] - 1;  // y coord
+		// right neighbour
+		right_neighbour[0][0] = mouse_loc[0][0] + 1 ; // x coord 
+		right_neighbour[0][1] = mouse_loc[0][1];  // y coord
+		// bottom neighbour
+		bottom_neighbour[0][0] = mouse_loc[0][0]; // x coord 
+		bottom_neighbour[0][1] = mouse_loc[0][1] + 1;  // y coord
+		// left neighbour
+		left_neighbour[0][0] = mouse_loc[0][0] - 1; // x coord 
+		left_neighbour[0][1] = mouse_loc[0][1];  // y coord
+
 		
 		// we need to get the utility values for each of the children of the mouse
 		// we need to figure out what the cat would do if the mouse moved to each of these locations
@@ -196,44 +217,68 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 
 		// check top child is connected in the maze
 		if (gr[location_index][0] == 1.0) {
-			// update the mouse location to its top neighbour
-
-			// call the minimax search on the cat. to call the next minimax search we need to
-				// calculate the next agentId
-				// increment the depth counter
-
-			// set the return value in the children_utilities array
-			children_utilities[0] = ;
+			// call the next minimax search and set the return value in the children_utilities array
+			children_utilities[0] = MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, top_neighbour, mode, utility, agentId + 1, depth + 1, maxDepth, alpha, beta);
 			// update the minmax_cost array with the utility for this child
-			minmax_cost[x][y] = children_utilities[0];
-			
-			// reset mouse location before the next if to allow the next child to process the right block
-				// maybe we dont need to do this if we set directly from local both x and y
+			minmax_cost[top_neighbour[0][0]][top_neighbour[0][1]] = children_utilities[0];
 		}
 
 		// check right child is connected in the maze
 		if (gr[location_index][1] == 1.0) {
-			/* code */
+			// call the next minimax search and set the return value in the children_utilities array
+			children_utilities[1] = MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, right_neighbour, mode, utility, agentId + 1, depth + 1, maxDepth, alpha, beta);
+			// update the minmax_cost array with the utility for this child
+			minmax_cost[right_neighbour[0][0]][right_neighbour[0][1]] = children_utilities[1];
 		}
 
 		// check bottom child is connected in the maze
 		if (gr[location_index][2] == 1.0) {
-			/* code */
+			// call the next minimax search and set the return value in the children_utilities array
+			children_utilities[2] = MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, bottom_neighbour, mode, utility, agentId + 1, depth + 1, maxDepth, alpha, beta);
+			// update the minmax_cost array with the utility for this child
+			minmax_cost[bottom_neighbour[0][0]][bottom_neighbour[0][1]] = children_utilities[2];
 		}
 
 		// check left child is connected in the maze
 		if (gr[location_index][3] == 1.0) {
-			/* code */
+			// call the next minimax search and set the return value in the children_utilities array
+			children_utilities[3] = MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, left_neighbour, mode, utility, agentId + 1, depth + 1, maxDepth, alpha, beta);
+			// update the minmax_cost array with the utility for this child
+			minmax_cost[left_neighbour[0][0]][left_neighbour[0][1]] = children_utilities[3];
 		}
 		
 		// we have the utility value for each child so now we need to find the max utility cost among the children
-		// set the max utility child as the next optimal move
+		int max_index = 0;
+		for (int x = 1; x < 4; x++){
+			if (children_utilities[max_index] > children_utilities[x]) {
+				max_index = x;
+			}
+		}
 
-		// reset the state of the game that was changed for the recusive calls ie reset the mouse location
-		mouse_loc[0][0] = local_mouse[0];
-		mouse_loc[0][1] = local_mouse[1];
+		// set the max utility child as the next optimal move
+		if (max_index == 0) {
+			// top neightbour is best option
+			path[0][0] = top_neighbour[0][0];
+			path[0][1] = top_neighbour[0][1];
+		}
+		else if (max_index == 1) {
+			// right neightbour is best option
+			path[0][0] = right_neighbour[0][0];
+			path[0][1] = right_neighbour[0][1];
+		}
+		else if (max_index == 2) {
+			// bottom neightbour is best option
+			path[0][0] = bottom_neighbour[0][0];
+			path[0][1] = bottom_neighbour[0][1];
+		}
+		else if (max_index == 3) {
+			// left neightbour is best option
+			path[0][0] = left_neighbour[0][0];
+			path[0][1] = left_neighbour[0][1];
+		}
+		
 		// return max utility cost
-		return(return_utility);
+		return(children_utilities[max_index]);
 
 	} 
 	else { // cat tings
@@ -310,10 +355,24 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 	// the closer the mouse is to the cheese the better the position
 
 	// first calculate the distance of the mouse to all the cheeses
+	double mouse_cheese_dist[10];
+	for (int i=0; i < cheeses; i++) {
+		mouse_cheese_dist[i] = sqrt(pow(mouse_loc[0][0] - cheese_loc[i][0], 2) + pow(mouse_loc[0][1] - cheese_loc[i][1], 2));
+	}
 
 	// then calculate the distance of the mouse to all the cats
+	double mouse_cat_dist[10];
+	for (int i=0; i < cheeses; i++) {
+		mouse_cat_dist[i] = sqrt(pow(mouse_loc[0][0] - cat_loc[i][0], 2) + pow(mouse_loc[0][1] - cat_loc[i][1], 2));
+	}
 
 	// find a function that gives a value combining the distance to the cats and the cheeses
+	printf("starto\n");
+	for(int loop = 0; loop < 10; loop++) {
+		printf("mouse to cheese [%d]: %f \n",loop, mouse_cheese_dist[loop]);
+		printf("mouse to cat [%d]: %f \n",loop, mouse_cat_dist[loop]);
+		printf("----loopo-----\n");
+	}
 
  return(1);   // <--- Obviously, this will be replaced by your computer utilities
 }
