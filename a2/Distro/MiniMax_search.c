@@ -26,6 +26,8 @@
 #include "MiniMax_search.h"
 #include <unistd.h>
 
+int times = 0;
+
 double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size_X][size_Y], int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, int mouse_loc[1][2], int mode, double (*utility)(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, int depth, double gr[graph_size][4]), int agentId, int depth, int maxDepth, double alpha, double beta) {
  /*
    This function is the interface between your solution for the assignment and the driver code. The driver code
@@ -159,6 +161,19 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 //  path[0][0]=mouse_loc[0][0];
 //  path[0][1]=mouse_loc[0][1];
 
+	if  (depth == 0) {
+		times += 1;
+		// printf("depth 0,  mouse x:%d y:%d\n", mouse_loc[0][0], mouse_loc[0][1]);
+	}
+
+	printf("depth:%d, agentID:%d   mouse x:%d y:%d\n",depth, agentId, mouse_loc[0][0], mouse_loc[0][1]);
+
+	if (times >= 100 && depth == 0)
+	{
+		// printf("mouse x:%d y:%d\n", mouse_loc[0][0], mouse_loc[0][1]);
+		sleep(600);
+	}
+	
 
 	// if (depth == 0){
 	// 	sleep(5);
@@ -169,14 +184,15 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 	// when this function is called, we are at root.
 	
 	// before we do anything, we need to check if this is a terminal node
-	if (depth == maxDepth || checkForTerminal(mouse_loc, cat_loc, cheese_loc, cats, cheeses)) {
+	if (depth + 1 == maxDepth || checkForTerminal(mouse_loc, cat_loc, cheese_loc, cats, cheeses)) {
 		double value = utility(cat_loc, cheese_loc, mouse_loc, cats, cheeses, depth, gr);
 
 		
-		for (int a = 0; a < depth; a++) {
-			printf("    ");
-		}
-		printf("reached max depth: %d,   returned utility:%f\n", depth, value);
+		// for (int a = 0; a < depth; a++) {
+		// 	printf("    ");
+		// }
+		// printf("reached max depth: %d    for agent:%d   returning utility:%f\n", depth, agentId, value);
+		printf("returning utility:%f\n", value);
 
 		if (agentId == 0) {
 			minmax_cost[mouse_loc[0][0]][mouse_loc[0][1]] = value;
@@ -202,18 +218,16 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 
 
 
-		for (int a = 0; a < depth; a++) {
-			printf("    ");
-		}
-		printf("called mouse with depth: %d\n", depth);
-		for (int a = 0; a < depth; a++) {
-			printf("    ");
-		}
-		printf("connections-> top:%f  right:%f  bottom:%f  left:%f\n", gr[location_index][0], gr[location_index][1], gr[location_index][2], gr[location_index][3]);
-		
-		
+		// for (int a = 0; a < depth; a++) {
+		// 	printf("    ");
+		// }
+		// printf("called mouse with depth: %d\n", depth);
+		// for (int a = 0; a < depth; a++) {
+		// 	printf("    ");
+		// }
+		printf("MOUSE    connections-> top:%f  right:%f  bottom:%f  left:%f\n", gr[location_index][0], gr[location_index][1], gr[location_index][2], gr[location_index][3]);
 
-		
+
 
 		//set the indexes of the children arrays
 		// top neighbour
@@ -240,40 +254,48 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 
 		// check top child is connected in the maze
 		if (gr[location_index][0] == 1.0) {
+			printf("updating the mouse to its top neighbour\n");
+			
 			// call the next minimax search and set the return value in the children_utilities array
 			children_utilities[0] = MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, top_neighbour, mode, utility, agentId + 1, depth + 1, maxDepth, alpha, beta);
 			// update the minmax_cost array with the utility for this child
-			// minmax_cost[top_neighbour[0][0]][top_neighbour[0][1]] = children_utilities[0];
+			minmax_cost[top_neighbour[0][0]][top_neighbour[0][1]] = children_utilities[0];
 		} else {
 			children_utilities[0] = -2147483648;
-		}
+		} 
 
 		// check right child is connected in the maze
 		if (gr[location_index][1] == 1.0) {
+			printf("updating the mouse to its right neighbour\n");
+
 			// call the next minimax search and set the return value in the children_utilities array
 			children_utilities[1] = MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, right_neighbour, mode, utility, agentId + 1, depth + 1, maxDepth, alpha, beta);
 			// update the minmax_cost array with the utility for this child
-			// minmax_cost[right_neighbour[0][0]][right_neighbour[0][1]] = children_utilities[1];
+			minmax_cost[right_neighbour[0][0]][right_neighbour[0][1]] = children_utilities[1];
 		} else {
 			children_utilities[1] = -2147483648;
 		}
 
 		// check bottom child is connected in the maze
 		if (gr[location_index][2] == 1.0) {
+			printf("updating the mouse to its bottom neighbour\n");
+			
 			// call the next minimax search and set the return value in the children_utilities array
 			children_utilities[2] = MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, bottom_neighbour, mode, utility, agentId + 1, depth + 1, maxDepth, alpha, beta);
 			// update the minmax_cost array with the utility for this child
-			// minmax_cost[bottom_neighbour[0][0]][bottom_neighbour[0][1]] = children_utilities[2];
+			minmax_cost[bottom_neighbour[0][0]][bottom_neighbour[0][1]] = children_utilities[2];
 		} else {
 			children_utilities[2] = -2147483648;
 		}
 
 		// check left child is connected in the maze
 		if (gr[location_index][3] == 1.0) {
+			printf("updating the mouse to its left neighbour\n");
+
 			// call the next minimax search and set the return value in the children_utilities array
 			children_utilities[3] = MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, left_neighbour, mode, utility, agentId + 1, depth + 1, maxDepth, alpha, beta);
 			// update the minmax_cost array with the utility for this child
-			// minmax_cost[left_neighbour[0][0]][left_neighbour[0][1]] = children_utilities[3];
+			minmax_cost[left_neighbour[0][0]][left_neighbour[0][1]] = children_utilities[3];
 		} else {
 			children_utilities[3] = -2147483648;
 		}
@@ -292,26 +314,30 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 			// top neightbour is best option
 			path[0][0] = top_neighbour[0][0];
 			path[0][1] = top_neighbour[0][1];
-			minmax_cost[top_neighbour[0][0]][top_neighbour[0][1]] = children_utilities[max_index];
+			// minmax_cost[top_neighbour[0][0]][top_neighbour[0][1]] = children_utilities[max_index];
 		}
 		else if (max_index == 1) {
 			// right neightbour is best option
 			path[0][0] = right_neighbour[0][0];
 			path[0][1] = right_neighbour[0][1];
-			minmax_cost[right_neighbour[0][0]][right_neighbour[0][1]] = children_utilities[max_index];
+			// minmax_cost[right_neighbour[0][0]][right_neighbour[0][1]] = children_utilities[max_index];
 		}
 		else if (max_index == 2) {
 			// bottom neightbour is best option
 			path[0][0] = bottom_neighbour[0][0];
 			path[0][1] = bottom_neighbour[0][1];
-			minmax_cost[bottom_neighbour[0][0]][bottom_neighbour[0][1]] = children_utilities[max_index];
+			// minmax_cost[bottom_neighbour[0][0]][bottom_neighbour[0][1]] = children_utilities[max_index];
 		}
 		else if (max_index == 3) {
 			// left neightbour is best option
 			path[0][0] = left_neighbour[0][0];
 			path[0][1] = left_neighbour[0][1];
-			minmax_cost[left_neighbour[0][0]][left_neighbour[0][1]] = children_utilities[max_index];
+			// minmax_cost[left_neighbour[0][0]][left_neighbour[0][1]] = children_utilities[max_index];
 		}
+		
+		
+		printf("MOUSE  top_utility:%f  right_utility:%f  bottom_utility:%f  left_utility:%f\n", children_utilities[0], children_utilities[1], children_utilities[2], children_utilities[3]);
+		printf("MOUSE  chosen move:%d\n", max_index);
 		
 		// return max utility cost
 		return(children_utilities[max_index]);
@@ -327,6 +353,11 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 		int cat_index = agentId - 1;
 		location_index = cat_loc[cat_index][0] + (cat_loc[cat_index][1] * size_X);
 		int next_agent_id = (agentId + 1) % (cats + 1);
+		int new_depth = depth;
+		if (next_agent_id == 0) {
+			new_depth += 1;
+		}
+		
 		
 		
 		
@@ -337,7 +368,7 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 		// for (int a = 0; a < depth; a++) {
 		// 	printf("    ");
 		// }
-		// printf("connections-> top:%f  right:%f  bottom:%f  left:%f\n", gr[location_index][0], gr[location_index][1], gr[location_index][2], gr[location_index][3]);
+		printf("CAT     connections-> top:%f  right:%f  bottom:%f  left:%f\n", gr[location_index][0], gr[location_index][1], gr[location_index][2], gr[location_index][3]);
 
 		
 		
@@ -351,44 +382,57 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 		
 		// check top child is connected in the maze
 		if (gr[location_index][0] == 1.0) {
+			printf("updating the cat to its top neighbour\n");
+
+
 			// update this cats location to its top neighbour
 			local_cats[cat_index][0] = cat_loc[cat_index][0];
 			local_cats[cat_index][1] = cat_loc[cat_index][1] - 1;
 			// call the next minimax search and set the return value in the children_utilities array
-			children_utilities[0] = MiniMax(gr, path, minmax_cost, local_cats, cats, cheese_loc, cheeses, mouse_loc, mode, utility, next_agent_id, depth + 1, maxDepth, alpha, beta);
+			children_utilities[0] = MiniMax(gr, path, minmax_cost, local_cats, cats, cheese_loc, cheeses, mouse_loc, mode, utility, next_agent_id, new_depth, maxDepth, alpha, beta);
 		} else {
 			children_utilities[0] = 2147483647;
 		}
 
 		// check right child is connected in the maze
 		if (gr[location_index][1] == 1.0) {
+			printf("updating the cat to its right neighbour\n");
+
+
 			// update this cats location to its right neighbour
 			local_cats[cat_index][0] = cat_loc[cat_index][0] + 1;
 			local_cats[cat_index][1] = cat_loc[cat_index][1];
 			// call the next minimax search and set the return value in the children_utilities array
-			children_utilities[1] = MiniMax(gr, path, minmax_cost, local_cats, cats, cheese_loc, cheeses, mouse_loc, mode, utility, next_agent_id, depth + 1, maxDepth, alpha, beta);
+			children_utilities[1] = MiniMax(gr, path, minmax_cost, local_cats, cats, cheese_loc, cheeses, mouse_loc, mode, utility, next_agent_id, new_depth, maxDepth, alpha, beta);
 		} else {
 			children_utilities[1] = 2147483647;
 		}
 
 		// check bottom child is connected in the maze
 		if (gr[location_index][2] == 1.0) {
+			printf("updating the cat to its bottom neighbour\n");
+
+
 			// update this cats location to its bottom neighbour
 			local_cats[cat_index][0] = cat_loc[cat_index][0];
 			local_cats[cat_index][1] = cat_loc[cat_index][1] + 1;
 			// call the next minimax search and set the return value in the children_utilities array
-			children_utilities[2] = MiniMax(gr, path, minmax_cost, local_cats, cats, cheese_loc, cheeses, mouse_loc, mode, utility, next_agent_id, depth + 1, maxDepth, alpha, beta);
+			children_utilities[2] = MiniMax(gr, path, minmax_cost, local_cats, cats, cheese_loc, cheeses, mouse_loc, mode, utility, next_agent_id, new_depth, maxDepth, alpha, beta);
 		} else {
 			children_utilities[2] = 2147483647;
 		}
 
 		// check left child is connected in the maze
 		if (gr[location_index][3] == 1.0) {
+			printf("updating the cat to its left neighbour\n");
+
+
+
 			// update this cats location to its left neighbour
 			local_cats[cat_index][0] = cat_loc[cat_index][0] - 1;
 			local_cats[cat_index][1] = cat_loc[cat_index][1];
 			// call the next minimax search and set the return value in the children_utilities array
-			children_utilities[3] = MiniMax(gr, path, minmax_cost, local_cats, cats, cheese_loc, cheeses, mouse_loc, mode, utility, next_agent_id, depth + 1, maxDepth, alpha, beta);
+			children_utilities[3] = MiniMax(gr, path, minmax_cost, local_cats, cats, cheese_loc, cheeses, mouse_loc, mode, utility, next_agent_id, new_depth, maxDepth, alpha, beta);
 		} else {
 			children_utilities[3] = 2147483647;
 		}
@@ -397,11 +441,13 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 		// we need to find the min utility cost among the children
 		int min_index = 0;
 		for (int x = 1; x < 4; x++){
-			if (children_utilities[min_index] < children_utilities[x]) {
+			if (children_utilities[min_index] > children_utilities[x]) {
 				min_index = x;
 			}
 		}
 
+		printf("CAT  top_utility:%f  right_utility:%f  bottom_utility:%f  left_utility:%f\n", children_utilities[0], children_utilities[1], children_utilities[2], children_utilities[3]);
+		printf("CAT  chosen move:%d\n", min_index);
 		return(children_utilities[min_index]);
 	}
 
@@ -434,26 +480,40 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 	// the closer the mouse is to the cheese the better the position
 
 	// first calculate the distance of the mouse to all the cheeses
+	double temp;
+	double util;
+
 	double mouse_cheese_dist[10];
+	double mouse_cheese_sum = 0;
 	for (int i=0; i < cheeses; i++) {
-		mouse_cheese_dist[i] = sqrt(pow(mouse_loc[0][0] - cheese_loc[i][0], 2) + pow(mouse_loc[0][1] - cheese_loc[i][1], 2));
+		temp = sqrt(pow(mouse_loc[0][0] - cheese_loc[i][0], 2) + pow(mouse_loc[0][1] - cheese_loc[i][1], 2));
+		mouse_cheese_dist[i] = temp;
+		mouse_cheese_sum += temp;
 	}
 
 	// then calculate the distance of the mouse to all the cats
 	double mouse_cat_dist[10];
+	double mouse_cat_sum = 0;
 	for (int i=0; i < cats; i++) {
-		mouse_cat_dist[i] = sqrt(pow(mouse_loc[0][0] - cat_loc[i][0], 2) + pow(mouse_loc[0][1] - cat_loc[i][1], 2));
+		temp = sqrt(pow(mouse_loc[0][0] - cat_loc[i][0], 2) + pow(mouse_loc[0][1] - cat_loc[i][1], 2));
+		mouse_cat_dist[i] = temp;
+		mouse_cat_sum += temp;
 	}
+
+	util = mouse_cat_sum - mouse_cheese_sum;
 
 	// find a function that gives a value combining the distance to the cats and the cheeses
 	// printf("starto\n");
-	// for(int loop = 0; loop < 10; loop++) {
+	// for(int loop = 0; loop < cats; loop++) {
 	// 	printf("mouse to cheese [%d]: %f \n",loop, mouse_cheese_dist[loop]);
 	// 	printf("mouse to cat [%d]: %f \n",loop, mouse_cat_dist[loop]);
 	// 	printf("----loopo-----\n");
 	// }
+	// printf("sum of mouse cheese distances: %f\n", mouse_cheese_sum);
+	// printf("sum of mouse cat distances: %f\n", mouse_cat_sum);
+	// printf("utility value: %f\n", util);
 
- return(1);   // <--- Obviously, this will be replaced by your computer utilities
+ 	return(util);   // <--- Obviously, this will be replaced by your computer utilities
 }
 
 int checkForTerminal(int mouse_loc[1][2],int cat_loc[10][2],int cheese_loc[10][2],int cats,int cheeses) {
