@@ -384,10 +384,10 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 		int cat_index = agentId - 1;
 		location_index = cat_loc[cat_index][0] + (cat_loc[cat_index][1] * size_X);
 		int next_agent_id = (agentId + 1) % (cats + 1);
-		int new_depth = depth;
-		if (next_agent_id == 0) {
-			new_depth += 1;
-		}
+		int new_depth = depth + 1;
+		// if (next_agent_id == 0) {
+		// 	new_depth += 1;
+		// }
 		
 
 		printf("CAT     connections-> top:%f  right:%f  bottom:%f  left:%f\n", gr[location_index][0], gr[location_index][1], gr[location_index][2], gr[location_index][3]);
