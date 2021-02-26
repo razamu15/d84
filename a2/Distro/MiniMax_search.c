@@ -156,21 +156,13 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
  *
  ********************************************************************************************************/
 
- // Stub so that the code compiles/runs - This will be removed and replaced by your code!
-
-//  path[0][0]=mouse_loc[0][0];
-//  path[0][1]=mouse_loc[0][1];
-
 	if  (depth == 0) {
 		times += 1;
-		// printf("depth 0,  mouse x:%d y:%d\n", mouse_loc[0][0], mouse_loc[0][1]);
 	}
 
 	printf("depth:%d, agentID:%d   mouse x:%d y:%d\n",depth, agentId, mouse_loc[0][0], mouse_loc[0][1]);
 
-	if (times >= 100 && depth == 0)
-	{
-		// printf("mouse x:%d y:%d\n", mouse_loc[0][0], mouse_loc[0][1]);
+	if (times >= 100 && depth == 0) {
 		sleep(600);
 	}
 	
@@ -217,16 +209,7 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 		location_index = mouse_loc[0][0] + (mouse_loc[0][1] * size_X);
 
 
-
-		// for (int a = 0; a < depth; a++) {
-		// 	printf("    ");
-		// }
-		// printf("called mouse with depth: %d\n", depth);
-		// for (int a = 0; a < depth; a++) {
-		// 	printf("    ");
-		// }
 		printf("MOUSE    connections-> top:%f  right:%f  bottom:%f  left:%f\n", gr[location_index][0], gr[location_index][1], gr[location_index][2], gr[location_index][3]);
-
 
 
 		//set the indexes of the children arrays
@@ -260,9 +243,22 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 			children_utilities[0] = MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, top_neighbour, mode, utility, agentId + 1, depth + 1, maxDepth, alpha, beta);
 			// update the minmax_cost array with the utility for this child
 			minmax_cost[top_neighbour[0][0]][top_neighbour[0][1]] = children_utilities[0];
+
+			// check for pruning
+			if (mode == 1) {
+				// set the alpha
+				if (children_utilities[0] > alpha) {
+					alpha = children_utilities[0];
+				}
+				// pruning condition
+				if (alpha >= beta) {
+					return (children_utilities[0]);
+				}
+			}
+
 		} else {
 			children_utilities[0] = -2147483648;
-		} 
+		}
 
 		// check right child is connected in the maze
 		if (gr[location_index][1] == 1.0) {
@@ -272,6 +268,19 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 			children_utilities[1] = MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, right_neighbour, mode, utility, agentId + 1, depth + 1, maxDepth, alpha, beta);
 			// update the minmax_cost array with the utility for this child
 			minmax_cost[right_neighbour[0][0]][right_neighbour[0][1]] = children_utilities[1];
+
+			// check for pruning
+			if (mode == 1) {
+				// set the alpha
+				if (children_utilities[1] > alpha) {
+					alpha = children_utilities[1];
+				}
+				// pruning condition
+				if (alpha >= beta) {
+					return (children_utilities[1]);
+				}
+			}
+
 		} else {
 			children_utilities[1] = -2147483648;
 		}
@@ -284,6 +293,19 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 			children_utilities[2] = MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, bottom_neighbour, mode, utility, agentId + 1, depth + 1, maxDepth, alpha, beta);
 			// update the minmax_cost array with the utility for this child
 			minmax_cost[bottom_neighbour[0][0]][bottom_neighbour[0][1]] = children_utilities[2];
+
+			// check for pruning
+			if (mode == 1) {
+				// set the alpha
+				if (children_utilities[2] > alpha) {
+					alpha = children_utilities[2];
+				}
+				// pruning condition
+				if (alpha >= beta) {
+					return (children_utilities[2]);
+				}
+			}
+
 		} else {
 			children_utilities[2] = -2147483648;
 		}
@@ -296,6 +318,19 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 			children_utilities[3] = MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, left_neighbour, mode, utility, agentId + 1, depth + 1, maxDepth, alpha, beta);
 			// update the minmax_cost array with the utility for this child
 			minmax_cost[left_neighbour[0][0]][left_neighbour[0][1]] = children_utilities[3];
+
+			// check for pruning
+			if (mode == 1) {
+				// set the alpha
+				if (children_utilities[3] > alpha) {
+					alpha = children_utilities[3];
+				}
+				// pruning condition
+				if (alpha >= beta) {
+					return (children_utilities[3]);
+				}
+			}
+
 		} else {
 			children_utilities[3] = -2147483648;
 		}
@@ -314,25 +349,21 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 			// top neightbour is best option
 			path[0][0] = top_neighbour[0][0];
 			path[0][1] = top_neighbour[0][1];
-			// minmax_cost[top_neighbour[0][0]][top_neighbour[0][1]] = children_utilities[max_index];
 		}
 		else if (max_index == 1) {
 			// right neightbour is best option
 			path[0][0] = right_neighbour[0][0];
 			path[0][1] = right_neighbour[0][1];
-			// minmax_cost[right_neighbour[0][0]][right_neighbour[0][1]] = children_utilities[max_index];
 		}
 		else if (max_index == 2) {
 			// bottom neightbour is best option
 			path[0][0] = bottom_neighbour[0][0];
 			path[0][1] = bottom_neighbour[0][1];
-			// minmax_cost[bottom_neighbour[0][0]][bottom_neighbour[0][1]] = children_utilities[max_index];
 		}
 		else if (max_index == 3) {
 			// left neightbour is best option
 			path[0][0] = left_neighbour[0][0];
 			path[0][1] = left_neighbour[0][1];
-			// minmax_cost[left_neighbour[0][0]][left_neighbour[0][1]] = children_utilities[max_index];
 		}
 		
 		
@@ -358,16 +389,7 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 			new_depth += 1;
 		}
 		
-		
-		
-		
-		// for (int a = 0; a < depth; a++) {
-		// 	printf("    ");
-		// }
-   		// printf("called cat with depth: %d\n", depth);
-		// for (int a = 0; a < depth; a++) {
-		// 	printf("    ");
-		// }
+
 		printf("CAT     connections-> top:%f  right:%f  bottom:%f  left:%f\n", gr[location_index][0], gr[location_index][1], gr[location_index][2], gr[location_index][3]);
 
 		
@@ -390,6 +412,19 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 			local_cats[cat_index][1] = cat_loc[cat_index][1] - 1;
 			// call the next minimax search and set the return value in the children_utilities array
 			children_utilities[0] = MiniMax(gr, path, minmax_cost, local_cats, cats, cheese_loc, cheeses, mouse_loc, mode, utility, next_agent_id, new_depth, maxDepth, alpha, beta);
+
+			// check for pruning
+			if (mode == 1) {
+				// set the beta
+				if (children_utilities[0] < beta) {
+					beta = children_utilities[0];
+				}
+				// pruning condition
+				if (alpha >= beta) {
+					return (children_utilities[0]);
+				}
+			}
+
 		} else {
 			children_utilities[0] = 2147483647;
 		}
@@ -404,6 +439,19 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 			local_cats[cat_index][1] = cat_loc[cat_index][1];
 			// call the next minimax search and set the return value in the children_utilities array
 			children_utilities[1] = MiniMax(gr, path, minmax_cost, local_cats, cats, cheese_loc, cheeses, mouse_loc, mode, utility, next_agent_id, new_depth, maxDepth, alpha, beta);
+
+			// check for pruning
+			if (mode == 1) {
+				// set the beta
+				if (children_utilities[1] < beta) {
+					beta = children_utilities[1];
+				}
+				// pruning condition
+				if (alpha >= beta) {
+					return (children_utilities[1]);
+				}
+			}
+
 		} else {
 			children_utilities[1] = 2147483647;
 		}
@@ -418,6 +466,19 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 			local_cats[cat_index][1] = cat_loc[cat_index][1] + 1;
 			// call the next minimax search and set the return value in the children_utilities array
 			children_utilities[2] = MiniMax(gr, path, minmax_cost, local_cats, cats, cheese_loc, cheeses, mouse_loc, mode, utility, next_agent_id, new_depth, maxDepth, alpha, beta);
+
+			// check for pruning
+			if (mode == 1) {
+				// set the beta
+				if (children_utilities[2] < beta) {
+					beta = children_utilities[2];
+				}
+				// pruning condition
+				if (alpha >= beta) {
+					return (children_utilities[2]);
+				}
+			}
+
 		} else {
 			children_utilities[2] = 2147483647;
 		}
@@ -433,6 +494,19 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 			local_cats[cat_index][1] = cat_loc[cat_index][1];
 			// call the next minimax search and set the return value in the children_utilities array
 			children_utilities[3] = MiniMax(gr, path, minmax_cost, local_cats, cats, cheese_loc, cheeses, mouse_loc, mode, utility, next_agent_id, new_depth, maxDepth, alpha, beta);
+
+			// check for pruning
+			if (mode == 1) {
+				// set the beta
+				if (children_utilities[3] < beta) {
+					beta = children_utilities[3];
+				}
+				// pruning condition
+				if (alpha >= beta) {
+					return (children_utilities[3]);
+				}
+			}
+
 		} else {
 			children_utilities[3] = 2147483647;
 		}
