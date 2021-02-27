@@ -549,37 +549,39 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 
 		These arguments are as described in A1. Do have a look at your solution!
  */
-
-	// the further the mouse if from the cats the better the position
-
-	// the closer the mouse is to the cheese the better the position
-
-	// first calculate the distance of the mouse to all the cheeses
-	double temp;
 	double util = 0;
 	int mouse_index = mouse_loc[0][0] + (mouse_loc[0][1] * size_X);
 
-	if (cheese_exists(cheese_loc, cheeses, mouse_loc[0][0], mouse_loc[0][1])) {
+	// If mouse is on the cheese, really high utility value
+	if (cheese_exists(cheese_loc, cheeses, mouse_loc[0][0], mouse_loc[0][1]))
+	{
 		util += 1000;
 	}
-	
-	if (cat_exists(cat_loc, cats, mouse_loc[0][0], mouse_loc[0][1])) {
+
+	// If mouse is on the cat, really negative utility value
+	if (cat_exists(cat_loc, cats, mouse_loc[0][0], mouse_loc[0][1]))
+	{
 		util += -1000;
 	}
 
-	if (cat_exists(cat_loc, cats, mouse_loc[0][0], mouse_loc[0][1] - 1) && gr[mouse_index][0] == 1.0) {
+	// If mouse is besides the cat, also really bad utility value
+	if (cat_exists(cat_loc, cats, mouse_loc[0][0], mouse_loc[0][1] - 1) && gr[mouse_index][0] == 1.0)
+	{
 		util += -500;
 	}
 
-	if (cat_exists(cat_loc, cats, mouse_loc[0][0] + 1, mouse_loc[0][1]) && gr[mouse_index][1] == 1.0) {
+	if (cat_exists(cat_loc, cats, mouse_loc[0][0] + 1, mouse_loc[0][1]) && gr[mouse_index][1] == 1.0)
+	{
 		util += -500;
 	}
 
-	if (cat_exists(cat_loc, cats, mouse_loc[0][0], mouse_loc[0][1] + 1) && gr[mouse_index][2] == 1.0) {
+	if (cat_exists(cat_loc, cats, mouse_loc[0][0], mouse_loc[0][1] + 1) && gr[mouse_index][2] == 1.0)
+	{
 		util += -500;
 	}
 
-	if (cat_exists(cat_loc, cats, mouse_loc[0][0] - 1, mouse_loc[0][1]) && gr[mouse_index][3] == 1.0) {
+	if (cat_exists(cat_loc, cats, mouse_loc[0][0] - 1, mouse_loc[0][1]) && gr[mouse_index][3] == 1.0)
+	{
 		util += -500;
 	}
 
@@ -590,27 +592,36 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 	// 	mouse_cheese_dist[i] = temp;
 	// 	mouse_cheese_sum += temp;
 	// }
+
+	// find the bfs from mouse to the cheese
 	int bfs_mouse_cheese = bfs(gr, cat_loc, cats, cheese_loc, cheeses, mouse_loc);
 	util -= bfs_mouse_cheese * 1.1;
+	// find the bfs from mouse to the cat
 	int bfs_mouse_cat = bfs(gr, cheese_loc, cheeses, cat_loc, cats, mouse_loc);
 	util += bfs_mouse_cat * 0.9;
 
 	int num_walls = 0;
 	double penalty = 0;
 
-	for (int j = 0; j < 4; j++) {
-		if (gr[mouse_index][j] != 1.0) {
+	// Find the number of walls that are near the mouse
+	for (int j = 0; j < 4; j++)
+	{
+		if (gr[mouse_index][j] != 1.0)
+		{
 			num_walls += 1;
 		}
 	}
-	if (num_walls == 3) {
+	// If the mouse is in a dead end, penalty is really high
+	if (num_walls == 3)
+	{
 		penalty = 200;
 	}
-	else {
+	else
+	{
+		// Otherwise it's a subtle penalty
 		penalty = num_walls * 0.2;
 	}
 	util -= penalty;
-
 
 	// find a function that gives a value combining the distance to the cats and the cheeses
 	// // printf("starto\n");
@@ -649,7 +660,7 @@ int checkForTerminal(int mouse_loc[1][2],int cat_loc[10][2],int cheese_loc[10][2
 
 }
 
-/* lines 622 to 689; queue implementation taken from https://www.geeksforgeeks.org/queue-linked-list-implementation/ 
+/* lines 665 to 732; queue implementation taken from https://www.geeksforgeeks.org/queue-linked-list-implementation/ 
    adaptions made to also make a stack work out of the same structures*/
 struct Node
 {
@@ -720,6 +731,7 @@ struct Node *deQ(struct Queue *q)
 	return (result);
 }
 
+// Function to check if a cat exists in the given location
 int cat_exists(int cat_loc[10][2], int cats, int x, int y)
 {
 	int i;
@@ -733,6 +745,7 @@ int cat_exists(int cat_loc[10][2], int cats, int x, int y)
 	return 0;
 }
 
+// Function to check if a cheese exists in the given location
 int cheese_exists(int cheese_loc[10][2], int cheeses, int x, int y)
 {
 	int i;

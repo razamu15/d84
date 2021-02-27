@@ -12,15 +12,15 @@ ________________________________________________
 
 Student Name 1 (last, first): Raza Muhammad
 
-Student Name 2 (last, first): 
+Student Name 2 (last, first): Yang Zongye
 
 Student number 1: 1004257127
 
-Student number 2:
+Student number 2: 1004453423
 
 UTORid 1: razamu15
 
-UTORid 2:
+UTORid 2: yangzon7
 
 READ THIS AND SIGN YOUR NAME AT THE END:
 
@@ -28,7 +28,7 @@ READ THIS AND SIGN YOUR NAME AT THE END:
 honesty and plaguarism. All work submitted as part
 of this assignment is my own.
 
-	Signed: _Muhammad Raza__	_(student 2 name here)__
+	Signed: _Muhammad Raza__	_Zongye Yang__
 
 
 (-5 marks for failing to provide the identifying
@@ -44,22 +44,22 @@ but explain carefully when needed.
      a single, meaningful value. Convince us that your utility
      makes sense!
 
-     *****DRAFT, ANDY UPDATE THIS*****
-     - A: sum of euclidean distances between the mouse and all cats
-     - B: sum of euclidean distances between the mouse and all cheeses
-     - C: A - B
-     
-     - bfs to check that the path we choose isnt a dead end, assign 
-       a penalty to the utility if picking a child node leads to a 
-       dead end. 
-     - D: Penalties + C
-     
-     - giving more weight to the closest cheese than the cheeses futher 
-       away. this is because if the mouse is directly in between 2 cheeses
-       both cheeses can be pulling the mouse in opposite directions, 
-       essentially forcing the mouse into a loop to move back and forth 
-       between the two cheeses. so we give more weight to the one slightly 
-       closer to escape this case.
+     The utility function uses several factors to decide whether the game state is good or bad for the mouse.
+     First, if the node is terminal and mouse eats the cheese, the utility function returns a very high value.
+     if the cat eats the mouse, the utility returns a very negative value.
+     The utility function also checks if the cat is adjacent to the given mouse location, and if that's true,
+     the function also returns a really negative value.
+     Otherwise, the function takes several factors into consideration.
+     It finds
+     A: the BFS distance from the mouse to the nearest cheese, and
+     B: the BFS distance from the mouse to the nearest cat.
+     It then calculates 0.9 * B - 1.1 * A.
+     If the mouse is closer to the cheese than the cat, it would be good for the mouse so the resulting value
+     would be positive and vice versa.
+     We gave more weight to the distance to the cheese than the cat because we wanted to encourage the mouse to
+     go toward the cheese more and the movement of the cat is not very predictable.
+     It then calculates the number of walls that are beside the mouse's location, and if the number of walls is 3,
+     it is a dead end and is very bad for the mouse. So I impose a harsh penalty on it.
 
      
 
@@ -87,9 +87,21 @@ but explain carefully when needed.
      can these be fixed either with the utility function, or
      by changing the search depth? if so, how?
 
+     There are several situations that will cause my mouse to lose.
+     First, the mouse can be surrounded by multiple cats hopelessly as the cats move in to
+     corner the mouse. In this situation the utility function likely would not affect the outcome
+     since it is pretty much impossible to win.
+     Second, the cheese is in a dead end and after the mouse eats the cheese and want to get out, it
+     is cornered by a cat. This would also be impossible for the utility function to fix. But our utility
+     function can avoid this by detecting dead ends with a high enough search depth.
+
 4 .- (2 marks) Compare cats with smartness=.8 against cats with
      smartness=1 - which are harder for your mouse to beat?
      why do you think that is?
+
+     I think .8 would be harder for our mouse to beat. I think this is because our utility function
+     is built to beat smartness=1 level cats. So some subpar movements that the cats make could end up messing
+     with our mouse's logic or become a better move down the line putting our mouse in a bad place.
 
 5 .- (2 marks) Can the mouse be made unbeatable by having an
      optimal utility function?
@@ -105,6 +117,10 @@ but explain carefully when needed.
 6 .- (2 bonus marks) Could a human playing the game in place
       of the mouse do better than your code? (yes, no, and
       a reasonable explanation of why)
+      Yes, I don't think our utility function is smart enough to beat a human yet.
+      The human would have a view of the whole board as they play the game while
+      our code can only see as far as 14 depth level.
+      
 
 _____________________________________________________
 
@@ -114,7 +130,7 @@ doesn't work, or what problems exist.
 	
 	Complete/Working	Partial		Not done
 
-Utility
+Utility      X
 function
 
 MiniMax      X
