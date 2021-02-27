@@ -557,13 +557,30 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 	// first calculate the distance of the mouse to all the cheeses
 	double temp;
 	double util = 0;
+	int mouse_index = mouse_loc[0][0] + (mouse_loc[0][1] * size_X);
 
 	if (cheese_exists(cheese_loc, cheeses, mouse_loc[0][0], mouse_loc[0][1])) {
-		util = 100;
+		util += 1000;
 	}
 	
 	if (cat_exists(cat_loc, cats, mouse_loc[0][0], mouse_loc[0][1])) {
-		util = -100;
+		util += -1000;
+	}
+
+	if (cat_exists(cat_loc, cats, mouse_loc[0][0], mouse_loc[0][1] - 1) && gr[mouse_index][0] == 1.0) {
+		util += -500;
+	}
+
+	if (cat_exists(cat_loc, cats, mouse_loc[0][0] + 1, mouse_loc[0][1]) && gr[mouse_index][1] == 1.0) {
+		util += -500;
+	}
+
+	if (cat_exists(cat_loc, cats, mouse_loc[0][0], mouse_loc[0][1] + 1) && gr[mouse_index][2] == 1.0) {
+		util += -500;
+	}
+
+	if (cat_exists(cat_loc, cats, mouse_loc[0][0] - 1, mouse_loc[0][1]) && gr[mouse_index][3] == 1.0) {
+		util += -500;
 	}
 
 	// double mouse_cheese_dist[10];
@@ -573,25 +590,24 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 	// 	mouse_cheese_dist[i] = temp;
 	// 	mouse_cheese_sum += temp;
 	// }
-
 	int bfs_mouse_cheese = bfs(gr, cat_loc, cats, cheese_loc, cheeses, mouse_loc);
 	util -= bfs_mouse_cheese * 1.1;
 	int bfs_mouse_cat = bfs(gr, cheese_loc, cheeses, cat_loc, cats, mouse_loc);
 	util += bfs_mouse_cat * 0.9;
 
 	int num_walls = 0;
-	int mouse_index = mouse_loc[0][0] + (mouse_loc[0][1] * size_X);
 	double penalty = 0;
+
 	for (int j = 0; j < 4; j++) {
-		if (gr[mouse_index][j] == 0.0) {
-			num_walls++;
+		if (gr[mouse_index][j] != 1.0) {
+			num_walls += 1;
 		}
 	}
 	if (num_walls == 3) {
-		penalty = 25;
+		penalty = 200;
 	}
 	else {
-		penalty = num_walls * 0.3;
+		penalty = num_walls * 0.2;
 	}
 	util -= penalty;
 
