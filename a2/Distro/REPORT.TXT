@@ -10,15 +10,15 @@ mark.
 
 ________________________________________________
 
-Student Name 1 (last, first):
+Student Name 1 (last, first): Raza Muhammad
 
-Student Name 2 (last, first):
+Student Name 2 (last, first): 
 
-Student number 1:
+Student number 1: 1004257127
 
 Student number 2:
 
-UTORid 1:
+UTORid 1: razamu15
 
 UTORid 2:
 
@@ -28,7 +28,7 @@ READ THIS AND SIGN YOUR NAME AT THE END:
 honesty and plaguarism. All work submitted as part
 of this assignment is my own.
 
-	Signed: _(student 1 name here)__	_(student 2 name here)__
+	Signed: _Muhammad Raza__	_(student 2 name here)__
 
 
 (-5 marks for failing to provide the identifying
@@ -44,9 +44,44 @@ but explain carefully when needed.
      a single, meaningful value. Convince us that your utility
      makes sense!
 
+     *****DRAFT, ANDY UPDATE THIS*****
+     - A: sum of euclidean distances between the mouse and all cats
+     - B: sum of euclidean distances between the mouse and all cheeses
+     - C: A - B
+     
+     - bfs to check that the path we choose isnt a dead end, assign 
+       a penalty to the utility if picking a child node leads to a 
+       dead end. 
+     - D: Penalties + C
+     
+     - giving more weight to the closest cheese than the cheeses futher 
+       away. this is because if the mouse is directly in between 2 cheeses
+       both cheeses can be pulling the mouse in opposite directions, 
+       essentially forcing the mouse into a loop to move back and forth 
+       between the two cheeses. so we give more weight to the one slightly 
+       closer to escape this case.
+
+     
+
 2 .- (2 marks) Ignoring computation time, what is the effect of
      search depth (number of turns) on the chances of the mouse
      winning the game. 
+
+     For the most part having a greater search depth means the mouse
+     is more likely to win and that is also what happens when we test 
+     out our implementation. But sometimes there are some edge cases 
+     where having a greater search depth means that the mouse actually
+     chooses a worse move that leads it to losing whereas with a lower
+     depth the mouse would not choose that move. 
+
+     That happens because for those cases where the mouse is only some 
+     blocks away from the closest cheese. The smaller depth does not 
+     lead the mouse directly to the closer cheese but gives more weight
+     to the position of the cats. However, the greater depth returns a
+     vastly better utility for a cheese that exists close to the mouse. 
+     This closer proximity gives more weight to the cheese and less to the
+     positions of the cats. And giving less weight to the position of the
+     cats leads the mouse to be sourrounded by them and evetually lose.
 
 3 .- (2 marks) What situations will cause your mouse to lose?
      can these be fixed either with the utility function, or
@@ -58,6 +93,14 @@ but explain carefully when needed.
 
 5 .- (2 marks) Can the mouse be made unbeatable by having an
      optimal utility function?
+
+     no because the utility function will always be an appropriate to some
+     degree. The only way to make the mouse absolutely unbeatable in 100% 
+     of the cases is to know what move the cat will make for every single
+     configuration of the game board. This is impossible because there are 
+     way too many possible moves in the game to consider for each configuration
+     per agent and it would take more time for us to figure out each and every
+     move than maybe even the length of our life. 
 
 6 .- (2 bonus marks) Could a human playing the game in place
       of the mouse do better than your code? (yes, no, and
@@ -72,12 +115,12 @@ doesn't work, or what problems exist.
 	Complete/Working	Partial		Not done
 
 Utility
- function
+function
 
-MiniMax
+MiniMax      X
 
-Alpha/Beta
- pruning
+Alpha/Beta   X
+pruning
 _____________________________________________________
 
 Marking:
