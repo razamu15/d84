@@ -165,11 +165,8 @@ void feat_QLearn_update(double gr[max_graph_size][4], double weights[25], double
     
     Your code must then evaluate the update and apply it to the weights in the weight array.    
    */
-
-  /***********************************************************************************************
-   * TO DO: Complete this function
-   ***********************************************************************************************/
   double current_features[25];
+  evaluateFeatures(gr, current_features, mouse_pos, cats, cheeses, size_X, graph_size);
   double current_state = Qsa(weights, current_features);
 
   double next_state;
@@ -297,6 +294,9 @@ void maxQsa(double gr[max_graph_size][4], double weights[25], int mouse_pos[1][2
   */
 
   int location_index = mouse_pos[0][0] + (mouse_pos[0][1] * size_X);
+  double action_rewards[4];
+  double feats[25];
+
   //set the indexes of the children arrays
   int top_neighbour[1][2];
 	int right_neighbour[1][2];
@@ -316,22 +316,58 @@ void maxQsa(double gr[max_graph_size][4], double weights[25], int mouse_pos[1][2
   left_neighbour[0][1] = mouse_pos[0][1];  // y coord
 
 
-  int original_mouse[1][2];
-  original_mouse[0][0] = mouse_pos[0][0];
-  original_mouse[0][1] = mouse_pos[0][1];
-  int action_rewards[4];
 
   // check if the top neighbour is connected
+  if (gr[location_index][0] == 1.0) {
+    // call evaluateFeatures() which will update the values inside the features array
+    evaluateFeatures(gr, feats, top_neighbour, cats, cheeses, size_X, graph_size);
+    // call Qsa() which will return to us the features* wieght / reward value for taking action to move above
+    action_rewards[0] = Qsa(weights, feats);
+  } else {
+    action_rewards[0] = -2147483648;
+  }
 
-  // if it is then update mouse location to its top neightbour
-  // call evaluateFeatures() which will update the values inside the features array
-  // call Qsa() which will return to us the features* wieght / reward value for taking action to move above
+  // check if the right neighbour is connected
+  if (gr[location_index][1] == 1.0) {
+    // call evaluateFeatures() which will update the values inside the features array
+    evaluateFeatures(gr, feats, right_neighbour, cats, cheeses, size_X, graph_size);
+    // call Qsa() which will return to us the features* wieght / reward value for taking action to move above
+    action_rewards[1] = Qsa(weights, feats);
+  } else {
+    action_rewards[1] = -2147483648;
+  }
 
-  //  ^
-  //  | repeat for left, bottom and right children
+  // check if the bottom neighbour is connected
+  if (gr[location_index][2] == 1.0) {
+    // call evaluateFeatures() which will update the values inside the features array
+    evaluateFeatures(gr, feats, bottom_neighbour, cats, cheeses, size_X, graph_size);
+    // call Qsa() which will return to us the features* wieght / reward value for taking action to move above
+    action_rewards[2] = Qsa(weights, feats);
+  } else {
+    action_rewards[2] = -2147483648;
+  }
 
-  *maxU = 0; // <--- stubs! your code will compute actual values for these two variables!
-  *maxA = 0;
+  // check if the left neighbour is connected
+  if (gr[location_index][3] == 1.0) {
+    // call evaluateFeatures() which will update the values inside the features array
+    evaluateFeatures(gr, feats, left_neighbour, cats, cheeses, size_X, graph_size);
+    // call Qsa() which will return to us the features* wieght / reward value for taking action to move above
+    action_rewards[3] = Qsa(weights, feats);
+  } else {
+    action_rewards[3] = -2147483648;
+  }
+
+  // we have the utility value for each child, so noowwwww
+  // we need to find the max utility cost among the children
+  int max_index = 0;
+  for (int x = 1; x < 4; x++){
+    if (action_rewards[max_index] < action_rewards[x]) {
+      max_index = x;
+    }
+  }
+
+  *maxU = action_rewards[max_index]; // <--- stubs! your code will compute actual values for these two variables!
+  *maxA = max_index;
   return;
 }
 
