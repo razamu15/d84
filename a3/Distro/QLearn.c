@@ -169,8 +169,18 @@ void feat_QLearn_update(double gr[max_graph_size][4], double weights[25], double
   /***********************************************************************************************
    * TO DO: Complete this function
    ***********************************************************************************************/
-  // Q(s'') is the current state given to us
-  w_i = alpha * (reward + (lambda * Q(s'' )) - Q(s)) * feature_i(s)
+  double current_features[25];
+  double current_state = Qsa(weights, current_features);
+
+  double next_state;
+  int action;
+  maxQsa(gr, weights, mouse_pos, cats, cheeses, size_X, graph_size, &next_state, &action);
+  
+  for (int i = 0; i < numFeatures; i++) {
+    weights[i] += alpha * (reward + ( lambda * next_state) - current_state) * current_features[i];
+  }
+  
+  // w_i = alpha * (reward + (lambda * Q(s'' )) - Q(s)) * feature_i(s)
 }
 
 int feat_QLearn_action(double gr[max_graph_size][4], double weights[25], int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], double pct, int size_X, int graph_size) {
@@ -207,7 +217,8 @@ int feat_QLearn_action(double gr[max_graph_size][4], double weights[25], int mou
     maxQsa(gr, weights, mouse_pos, cats, cheeses, size_X, graph_size, &trash, &random_action);
   }
 
-  return (0); // <--- replace this while you're at it!
+  printf("returning random actin: %d", random_action);
+  return (random_action); // <--- replace this while you're at it!
 }
 
 void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], int size_X, int graph_size) {
@@ -253,6 +264,8 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
     cat_count += 1;
   }
   features[1] = cat_dist;
+
+  printf("calculated features,    mouse_cheese f1:%f    mouse_cats f2:%f", features[0], features[1]);
 }
 
 double Qsa(double weights[25], double features[25])
@@ -269,6 +282,7 @@ double Qsa(double weights[25], double features[25])
     sum += weights[i] * features[i];
   }
 
+  printf("reutrning sum from Qsa:%f", sum);
   return (sum); // <--- stub! compute and return the Qsa value
 }
 
@@ -282,14 +296,33 @@ void maxQsa(double gr[max_graph_size][4], double weights[25], int mouse_pos[1][2
    wall. 
   */
 
-  /***********************************************************************************************
-   * TO DO: Complete this function
-   ***********************************************************************************************/
+  int location_index = mouse_pos[0][0] + (mouse_pos[0][1] * size_X);
+  //set the indexes of the children arrays
+  int top_neighbour[1][2];
+	int right_neighbour[1][2];
+	int bottom_neighbour[1][2];
+	int left_neighbour[1][2];
+  // top neighbour
+  top_neighbour[0][0] = mouse_pos[0][0]; // x coord 
+  top_neighbour[0][1] = mouse_pos[0][1] - 1;  // y coord
+  // right neighbour
+  right_neighbour[0][0] = mouse_pos[0][0] + 1 ; // x coord 
+  right_neighbour[0][1] = mouse_pos[0][1];  // y coord
+  // bottom neighbour
+  bottom_neighbour[0][0] = mouse_pos[0][0]; // x coord 
+  bottom_neighbour[0][1] = mouse_pos[0][1] + 1;  // y coord
+  // left neighbour
+  left_neighbour[0][0] = mouse_pos[0][0] - 1; // x coord 
+  left_neighbour[0][1] = mouse_pos[0][1];  // y coord
 
-  //save original mouse position
-  // action result array = 0
+
+  int original_mouse[1][2];
+  original_mouse[0][0] = mouse_pos[0][0];
+  original_mouse[0][1] = mouse_pos[0][1];
+  int action_rewards[4];
 
   // check if the top neighbour is connected
+
   // if it is then update mouse location to its top neightbour
   // call evaluateFeatures() which will update the values inside the features array
   // call Qsa() which will return to us the features* wieght / reward value for taking action to move above
