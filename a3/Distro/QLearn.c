@@ -33,7 +33,7 @@
 
 void QLearn_update(int s, int a, double r, int s_new, double *QTable)
 {
- /*
+  /*
    This function implementes the Q-Learning update as stated in Lecture. It 
    receives as input a <s,a,r,s'> tuple, and updates the Q-table accordingly.
    
@@ -46,12 +46,10 @@ void QLearn_update(int s, int a, double r, int s_new, double *QTable)
    Details on how states are used for indexing into the QTable are shown
    below, in the comments for QLearn_action. Be sure to read those as well!
  */
- 
+
   /***********************************************************************************************
    * TO DO: Complete this function
    ***********************************************************************************************/
-
-  
 }
 
 int QLearn_action(double gr[max_graph_size][4], int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], double pct, double *QTable, int size_X, int graph_size)
@@ -125,13 +123,12 @@ int QLearn_action(double gr[max_graph_size][4], int mouse_pos[1][2], int cats[5]
      
      NOTE: There is only one cat and once cheese, so you only need to use cats[0][:] and cheeses[0][:]
    */
-  
+
   /***********************************************************************************************
    * TO DO: Complete this function
-   ***********************************************************************************************/  
+   ***********************************************************************************************/
 
-  return(0);		// <--- of course, you will change this!
-  
+  return (0); // <--- of course, you will change this!
 }
 
 double QLearn_reward(double gr[max_graph_size][4], int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], int size_X, int graph_size)
@@ -150,14 +147,14 @@ double QLearn_reward(double gr[max_graph_size][4], int mouse_pos[1][2], int cats
     This function should return a maximim/minimum reward when the mouse eats/gets eaten respectively.      
    */
 
-   /***********************************************************************************************
+  /***********************************************************************************************
    * TO DO: Complete this function
-   ***********************************************************************************************/ 
+   ***********************************************************************************************/
 
-  return(0);		// <--- of course, you will change this as well!     
+  return (0); // <--- of course, you will change this as well!
 }
 
-void feat_QLearn_update(double gr[max_graph_size][4],double weights[25], double reward, int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], int size_X, int graph_size)
+void feat_QLearn_update(double gr[max_graph_size][4], double weights[25], double reward, int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], int size_X, int graph_size)
 {
   /*
     This function performs the Q-learning adjustment to all the weights associated with your
@@ -168,15 +165,15 @@ void feat_QLearn_update(double gr[max_graph_size][4],double weights[25], double 
     
     Your code must then evaluate the update and apply it to the weights in the weight array.    
    */
-  
-   /***********************************************************************************************
+
+  /***********************************************************************************************
    * TO DO: Complete this function
-   ***********************************************************************************************/        
-      
+   ***********************************************************************************************/
+  // Q(s'') is the current state given to us
+  w_i = alpha * (reward + (lambda * Q(s'' )) - Q(s)) * feature_i(s)
 }
 
-int feat_QLearn_action(double gr[max_graph_size][4],double weights[25], int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], double pct, int size_X, int graph_size)
-{
+int feat_QLearn_action(double gr[max_graph_size][4], double weights[25], int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], double pct, int size_X, int graph_size) {
   /*
     Similar to its counterpart for standard Q-learning, this function returns the index of the next
     action to be taken by the mouse.
@@ -193,14 +190,27 @@ int feat_QLearn_action(double gr[max_graph_size][4],double weights[25], int mous
 
   /***********************************************************************************************
    * TO DO: Complete this function
-   ***********************************************************************************************/        
+   ***********************************************************************************************/
+  int random_action;
+  // Draw a random number c in [0,1]
+  double c = (double)rand() / (double)RAND_MAX;
 
-  return(0);		// <--- replace this while you're at it!
+  if (c > pct) {
+    random_action = rand() % 4;
+    int index = mouse_pos[0][0] + (mouse_pos[0][1] * size_X);
+    while (gr[index][random_action] < 1) {
+      random_action = rand() % 4;
+    }
+  }
+  else {
+    double trash;
+    maxQsa(gr, weights, mouse_pos, cats, cheeses, size_X, graph_size, &trash, &random_action);
+  }
 
+  return (0); // <--- replace this while you're at it!
 }
 
-void evaluateFeatures(double gr[max_graph_size][4],double features[25], int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], int size_X, int graph_size)
-{
+void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], int size_X, int graph_size) {
   /*
    This function evaluates all the features you defined for the game configuration given by the input
    mouse, cats, and cheese positions. You are free to define up to 25 features. This function will
@@ -216,10 +226,33 @@ void evaluateFeatures(double gr[max_graph_size][4],double features[25], int mous
    will have a value of -1 - check this when evaluating your features!
   */
 
-   /***********************************************************************************************
+  /***********************************************************************************************
    * TO DO: Complete this function
-   ***********************************************************************************************/      
-   
+   ***********************************************************************************************/
+
+  // basically just go through and fill in the values for features i = 0 to i = numFeatures
+  // sum of distances from mouse to all cheeses
+  double temp = 0;
+
+  // FEATURE 1 MOUSE DISTANCE TO CHEESES
+  int cheese_count = 0;
+  double cheese_dist = 0;
+  while (cheeses[cheese_count][0] != -1) {
+    temp = sqrt(pow(mouse_pos[0][0] - cheeses[cheese_count][0], 2) + pow(mouse_pos[0][1] - cheeses[cheese_count][1], 2));
+    cheese_dist += temp;
+    cheese_count += 1;
+  }
+  features[0] = cheese_dist;
+
+  // FEATURE 2 MOUSE DISTANCE TO CATS
+  int cat_count = 0;
+  double cat_dist = 0;
+  while (cats[cat_count][0] != -1) {
+    temp = sqrt(pow(mouse_pos[0][0] - cats[cat_count][0], 2) + pow(mouse_pos[0][1] - cats[cat_count][1], 2));
+    cat_dist += temp;
+    cat_count += 1;
+  }
+  features[1] = cat_dist;
 }
 
 double Qsa(double weights[25], double features[25])
@@ -230,14 +263,17 @@ double Qsa(double weights[25], double features[25])
 
   /***********************************************************************************************
   * TO DO: Complete this function
-  ***********************************************************************************************/  
-  
-  return(0);		// <--- stub! compute and return the Qsa value
+  ***********************************************************************************************/
+  double sum = 0;
+  for (int i = 0; i < numFeatures; i++) {
+    sum += weights[i] * features[i];
+  }
+
+  return (sum); // <--- stub! compute and return the Qsa value
 }
 
-void maxQsa(double gr[max_graph_size][4],double weights[25],int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], int size_X, int graph_size, double *maxU, int *maxA)
-{
- /*
+void maxQsa(double gr[max_graph_size][4], double weights[25], int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], int size_X, int graph_size, double *maxU, int *maxA) {
+  /*
    Given the state represented by the input positions for mouse, cats, and cheese, this function evaluates
    the Q-value at all possible neighbour states and returns the max. The maximum value is returned in maxU
    and the index of the action corresponding to this value is returned in maxA.
@@ -245,15 +281,25 @@ void maxQsa(double gr[max_graph_size][4],double weights[25],int mouse_pos[1][2],
    You should make sure the function does not evaluate moves that would make the mouse walk through a
    wall. 
   */
- 
-   /***********************************************************************************************
+
+  /***********************************************************************************************
    * TO DO: Complete this function
-   ***********************************************************************************************/  
- 
-  *maxU=0;	// <--- stubs! your code will compute actual values for these two variables!
-  *maxA=0;
+   ***********************************************************************************************/
+
+  //save original mouse position
+  // action result array = 0
+
+  // check if the top neighbour is connected
+  // if it is then update mouse location to its top neightbour
+  // call evaluateFeatures() which will update the values inside the features array
+  // call Qsa() which will return to us the features* wieght / reward value for taking action to move above
+
+  //  ^
+  //  | repeat for left, bottom and right children
+
+  *maxU = 0; // <--- stubs! your code will compute actual values for these two variables!
+  *maxA = 0;
   return;
-   
 }
 
 /***************************************************************************************************
