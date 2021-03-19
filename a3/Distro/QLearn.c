@@ -154,8 +154,7 @@ double QLearn_reward(double gr[max_graph_size][4], int mouse_pos[1][2], int cats
   return (0); // <--- of course, you will change this as well!
 }
 
-void feat_QLearn_update(double gr[max_graph_size][4], double weights[25], double reward, int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], int size_X, int graph_size)
-{
+void feat_QLearn_update(double gr[max_graph_size][4], double weights[25], double reward, int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], int size_X, int graph_size) {
   /*
     This function performs the Q-learning adjustment to all the weights associated with your
     features. Unlike standard Q-learning, you don't receive a <s,a,r,s'> tuple, instead,
@@ -201,20 +200,25 @@ int feat_QLearn_action(double gr[max_graph_size][4], double weights[25], int mou
   int random_action;
   // Draw a random number c in [0,1]
   double c = (double)rand() / (double)RAND_MAX;
+  int index = mouse_pos[0][0] + (mouse_pos[0][1] * size_X);
+
+  // printf("====\n");
 
   if (c > pct) {
     random_action = rand() % 4;
-    int index = mouse_pos[0][0] + (mouse_pos[0][1] * size_X);
-    while (gr[index][random_action] < 1) {
+    while (gr[index][random_action] != 1.0) {
       random_action = rand() % 4;
     }
+    // printf("action selected randomly\n");
   }
   else {
     double trash;
     maxQsa(gr, weights, mouse_pos, cats, cheeses, size_X, graph_size, &trash, &random_action);
+    // printf("maxQsa returned action:%d\n", random_action);
   }
 
-  printf("returning random actin: %d", random_action);
+  // printf("MOUSE    connections-> top:%f  right:%f  bottom:%f  left:%f\n", gr[index][0], gr[index][1], gr[index][2], gr[index][3]);
+  // printf("returning actin: %d\n", random_action);
   return (random_action); // <--- replace this while you're at it!
 }
 
@@ -262,7 +266,7 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
   }
   features[1] = cat_dist;
 
-  printf("calculated features,    mouse_cheese f1:%f    mouse_cats f2:%f", features[0], features[1]);
+  // printf("calculated features,    mouse_cheese f1:%f    mouse_cats f2:%f\n", features[0], features[1]);
 }
 
 double Qsa(double weights[25], double features[25])
@@ -279,7 +283,8 @@ double Qsa(double weights[25], double features[25])
     sum += weights[i] * features[i];
   }
 
-  printf("reutrning sum from Qsa:%f", sum);
+  // printf("feature1:%f--weight1:%f    feature2:%f--weight2:%f\n", features[0], weights[0], features[1], weights[1]);
+  // printf("reutrning sum from Qsa:%f\n", sum);
   return (sum); // <--- stub! compute and return the Qsa value
 }
 
@@ -359,12 +364,21 @@ void maxQsa(double gr[max_graph_size][4], double weights[25], int mouse_pos[1][2
 
   // we have the utility value for each child, so noowwwww
   // we need to find the max utility cost among the children
-  int max_index = 0;
-  for (int x = 1; x < 4; x++){
-    if (action_rewards[max_index] < action_rewards[x]) {
+  int max_index = -1;
+  for (int x = 0; x < 4; x++){
+    if (action_rewards[x] == -2147483648) {
+      continue;
+    } else if (max_index == -1) {
+      max_index = x;
+    } else if (action_rewards[x] > action_rewards[max_index]) {
       max_index = x;
     }
   }
+
+  // printf("MOUSE    connections-> top:%f  right:%f  bottom:%f  left:%f\n", gr[location_index][0], gr[location_index][1], gr[location_index][2], gr[location_index][3]);
+  // printf("values-> top:%f  right:%f  bottom:%f  left:%f\n", action_rewards[0], action_rewards[1], action_rewards[2], action_rewards[3]);
+  // printf("weights,    1:%f    2:%f\n", weights[0], weights[1]);
+  // printf("returned action:%d   value:%f\n", max_index, action_rewards[max_index]);
 
   *maxU = action_rewards[max_index]; // <--- stubs! your code will compute actual values for these two variables!
   *maxA = max_index;
