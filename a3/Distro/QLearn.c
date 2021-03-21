@@ -47,9 +47,17 @@ void QLearn_update(int s, int a, double r, int s_new, double *QTable)
    below, in the comments for QLearn_action. Be sure to read those as well!
  */
 
-  /***********************************************************************************************
-   * TO DO: Complete this function
-   ***********************************************************************************************/
+  double maxQ = *(QTable + (4 * s_new) + 0);
+
+  for (int action = 1; action < 4; action++)
+  {
+    if (*(QTable + (4 * s_new) + action) > maxQ)
+    {
+      maxQ = *(QTable + (4 * s_new) + action);
+    }
+  }
+
+  *(QTable + (4 * s) + a) += alpha * (r + lambda * maxQ - *(QTable + (4 * s) + a));
 }
 
 int QLearn_action(double gr[max_graph_size][4], int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], double pct, double *QTable, int size_X, int graph_size)
@@ -124,11 +132,44 @@ int QLearn_action(double gr[max_graph_size][4], int mouse_pos[1][2], int cats[5]
      NOTE: There is only one cat and once cheese, so you only need to use cats[0][:] and cheeses[0][:]
    */
 
-  /***********************************************************************************************
-   * TO DO: Complete this function
-   ***********************************************************************************************/
+  double c = (double)rand() / (double)RAND_MAX;
+  int move = 0;
+  int mouseIdx = mouse_pos[0][0] + (mouse_pos[0][1] * size_X);
 
-  return (0); // <--- of course, you will change this!
+  // If random number <= pct then use Qtable to find action
+  if (c <= pct)
+  {
+    double maximum = -INFINITY;
+    double qvalue;
+    int state = (mouse_pos[0][0] + (mouse_pos[0][1] * size_X)) + ((cats[0][0] + (cats[0][1] * size_X)) * graph_size) + ((cheeses[0][0] + (cheeses[0][1] * size_X)) * graph_size * graph_size);
+
+    // return best possible action in Q table
+    for (int i = 0; i < 4; i++)
+    {
+      if (gr[mouseIdx][i] == 1.0)
+      {
+        qvalue = *(QTable + (4 * state) + i);
+        if (qvalue > maximum)
+        {
+          maximum = qvalue;
+          move = i;
+        }
+      }
+    }
+  }
+  else
+  {
+    // return random valid action
+    move = rand() % 4;
+
+    // make sure the move is valid
+    while (gr[mouseIdx][move] != 1.0)
+    {
+      move = rand() % 4;
+    }
+  }
+
+  return (move);
 }
 
 double QLearn_reward(double gr[max_graph_size][4], int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], int size_X, int graph_size)
@@ -147,11 +188,20 @@ double QLearn_reward(double gr[max_graph_size][4], int mouse_pos[1][2], int cats
     This function should return a maximim/minimum reward when the mouse eats/gets eaten respectively.      
    */
 
-  /***********************************************************************************************
-   * TO DO: Complete this function
-   ***********************************************************************************************/
-
-  return (0); // <--- of course, you will change this as well!
+  // If mouse is on cheese return max
+  if (mouse_pos[0][0] == cheeses[0][0] && mouse_pos[0][1] == cheeses[0][1])
+  {
+    return MAX;
+  }
+  else if (mouse_pos[0][0] == cats[0][0] && mouse_pos[0][1] == cats[0][1])
+  {
+    // If mouse is on cat return -MAX
+    return -MAX;
+  }
+  else
+  {
+    return -alpha;
+  }
 }
 
 void feat_QLearn_update(double gr[max_graph_size][4], double weights[25], double reward, int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], int size_X, int graph_size) {

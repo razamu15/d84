@@ -30,6 +30,8 @@
 #define lambda .5			// Discount rate for future rewards
 #define max_graph_size 32*32
 
+#define MAX 1000.0 // The MAX reward for q learning
+
 #define numFeatures 2			// UPDATE THIS to be the number of features you have
 
 // Function prototypes for D84 - Unit 3 - Reinforcement Learning
