@@ -200,63 +200,7 @@ double QLearn_reward(double gr[max_graph_size][4], int mouse_pos[1][2], int cats
   }
   else
   {
-    // Else return a small reward calculation
-    double util = 0;
-    int mouse_index = mouse_pos[0][0] + (mouse_pos[0][1] * size_X);
-
-    // If mouse is besides the cat, also really bad utility value
-    // If cat is above mouse
-    if (cats[0][0] == mouse_pos[0][0] && cats[0][1] == mouse_pos[0][1] - 1 && gr[mouse_index][0] == 1.0)
-    {
-      util = -300.0;
-    }
-    // If cat is right to the mouse
-    if (cats[0][0] == mouse_pos[0][0] + 1 && cats[0][1] == mouse_pos[0][1] && gr[mouse_index][1] == 1.0)
-    {
-      util = -300.0;
-    }
-    // If cat is under mouse
-    if (cats[0][0] == mouse_pos[0][0] && cats[0][1] == mouse_pos[0][1] + 1 && gr[mouse_index][2] == 1.0)
-    {
-      util = -300.0;
-    }
-    // If cat is left to mouse
-    if (cats[0][0] == mouse_pos[0][0] - 1 && cats[0][1] == mouse_pos[0][1] && gr[mouse_index][3] == 1.0)
-    {
-      util = -300.0;
-    }
-
-    // find the bfs from mouse to the cheese
-    int hattan_mouse_cheese = manhattan(mouse_pos, cheeses);
-    util -= hattan_mouse_cheese * 1.1;
-    // find the bfs from mouse to the cat
-    int hattan_mouse_cat = manhattan(mouse_pos, cats);
-    util += hattan_mouse_cat * 0.9;
-
-    int num_walls = 0;
-    double penalty = 0;
-
-    // Find the number of walls that are near the mouse
-    for (int j = 0; j < 4; j++)
-    {
-      if (gr[mouse_index][j] != 1.0)
-      {
-        num_walls += 1;
-      }
-    }
-    // If the mouse is in a dead end, penalty is really high
-    if (num_walls == 3)
-    {
-      penalty = 200.0;
-    }
-    else
-    {
-      // Otherwise it's a subtle penalty
-      penalty = num_walls * 0.5;
-    }
-    util -= penalty;
-
-    return (util); // <--- Obviously, this will be replaced by your computer utilities
+    return -alpha;
   }
 }
 
@@ -363,8 +307,3 @@ void maxQsa(double gr[max_graph_size][4],double weights[25],int mouse_pos[1][2],
  *  Add any functions needed to compute your features below 
  *                 ---->  THIS BOX <-----
  * *************************************************************************************************/
-
-int manhattan(int mouse_pos[1][2], int goal_pos[5][2])
-{
-  return (abs(goal_pos[0][0] - mouse_pos[0][0]) + abs(goal_pos[0][1] - mouse_pos[0][1]));
-}
