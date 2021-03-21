@@ -4,3 +4,7 @@ a1/Distro/AI_search
 a2/Distro/MiniMax_search_core_GL.o
 a2/Distro/MiniMax_search.o
 a2/Distro/MiniMax_search
+a3/Distro/QLearn.o
+a3/Distro/QLearn
+a3/Distro/*.dat
+a3/Distro/*.txt

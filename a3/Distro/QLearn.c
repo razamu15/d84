@@ -172,11 +172,21 @@ void feat_QLearn_update(double gr[max_graph_size][4], double weights[25], double
   int action;
   maxQsa(gr, weights, mouse_pos, cats, cheeses, size_X, graph_size, &next_state, &action);
   
+  double update;
   for (int i = 0; i < numFeatures; i++) {
-    weights[i] += alpha * (reward + ( lambda * next_state) - current_state) * current_features[i];
+    update = alpha * (reward +  (lambda * next_state) - current_state) * current_features[i];
+    
+    // if (update < 0) {
+    //   printf("reward:%f,  next_state:%f,    current_state:%f\n", reward, next_state, current_state);
+    //   printf("weight%d value:%f    update value:%f   sum:%f\n",i, weights[i], update, weights[i] + update);
+    // }
+    // if (reward != 0) {
+    // printf("reward:%f", reward);
+    // }
+    // printf("PRE weight{%d}:%f    \n",i, weights[i]);
+    weights[i] = weights[i] + update;
+    // printf("POST weight{%d}:%f    \n",i, weights[i]);
   }
-  
-  // w_i = alpha * (reward + (lambda * Q(s'' )) - Q(s)) * feature_i(s)
 }
 
 int feat_QLearn_action(double gr[max_graph_size][4], double weights[25], int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], double pct, int size_X, int graph_size) {
@@ -254,7 +264,7 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
     cheese_dist += temp;
     cheese_count += 1;
   }
-  features[0] = cheese_dist;
+  features[0] = 1 / (1 + exp(-1*cheese_dist));
 
   // FEATURE 2 MOUSE DISTANCE TO CATS
   int cat_count = 0;
@@ -264,7 +274,8 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
     cat_dist += temp;
     cat_count += 1;
   }
-  features[1] = cat_dist;
+  features[1] =  1 / (1 + exp(-1*cat_dist));
+
 
   // printf("calculated features,    mouse_cheese f1:%f    mouse_cats f2:%f\n", features[0], features[1]);
 }
