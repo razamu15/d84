@@ -30,6 +30,8 @@
 #define lambda .5			// Discount rate for future rewards
 #define max_graph_size 32*32
 
+#define MAX 1000.0 // The MAX reward for q learning
+
 #define numFeatures 2			// UPDATE THIS to be the number of features you have
 
 // Function prototypes for D84 - Unit 3 - Reinforcement Learning
@@ -47,5 +49,7 @@ void expensiveFeature1(double gr[max_graph_size][4], int path[max_graph_size][2]
 int checkForGoal(int x, int y, int pos[5][2]);
 
 // If you need to add any function prototypes yourself, you can do so *below* this line.
+int manhattan(int mouse_pos[1][2], int goal_pos[5][2]);
+
 #endif
 

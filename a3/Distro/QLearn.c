@@ -46,12 +46,18 @@ void QLearn_update(int s, int a, double r, int s_new, double *QTable)
    Details on how states are used for indexing into the QTable are shown
    below, in the comments for QLearn_action. Be sure to read those as well!
  */
- 
-  /***********************************************************************************************
-   * TO DO: Complete this function
-   ***********************************************************************************************/
 
-  
+  double maxQ = *(QTable + (4 * s_new) + 0);
+
+  for (int action = 1; action < 4; action++)
+  {
+    if (*(QTable + (4 * s_new) + action) > maxQ)
+    {
+      maxQ = *(QTable + (4 * s_new) + action);
+    }
+  }
+
+  *(QTable + (4 * s) + a) += alpha * (r + lambda * maxQ - *(QTable + (4 * s) + a));
 }
 
 int QLearn_action(double gr[max_graph_size][4], int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], double pct, double *QTable, int size_X, int graph_size)
@@ -125,13 +131,45 @@ int QLearn_action(double gr[max_graph_size][4], int mouse_pos[1][2], int cats[5]
      
      NOTE: There is only one cat and once cheese, so you only need to use cats[0][:] and cheeses[0][:]
    */
-  
-  /***********************************************************************************************
-   * TO DO: Complete this function
-   ***********************************************************************************************/  
 
-  return(0);		// <--- of course, you will change this!
-  
+  double c = (double)rand() / (double)RAND_MAX;
+  int move = 0;
+  int mouseIdx = mouse_pos[0][0] + (mouse_pos[0][1] * size_X);
+
+  // If random number <= pct then use Qtable to find action
+  if (c <= pct)
+  {
+    double maximum = -INFINITY;
+    double qvalue;
+    int state = (mouse_pos[0][0] + (mouse_pos[0][1] * size_X)) + ((cats[0][0] + (cats[0][1] * size_X)) * graph_size) + ((cheeses[0][0] + (cheeses[0][1] * size_X)) * graph_size * graph_size);
+
+    // return best possible action in Q table
+    for (int i = 0; i < 4; i++)
+    {
+      if (gr[mouseIdx][i] == 1.0)
+      {
+        qvalue = *(QTable + (4 * state) + i);
+        if (qvalue > maximum)
+        {
+          maximum = qvalue;
+          move = i;
+        }
+      }
+    }
+  }
+  else
+  {
+    // return random valid action
+    move = rand() % 4;
+
+    // make sure the move is valid
+    while (gr[mouseIdx][move] != 1.0)
+    {
+      move = rand() % 4;
+    }
+  }
+
+  return (move);
 }
 
 double QLearn_reward(double gr[max_graph_size][4], int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], int size_X, int graph_size)
@@ -150,11 +188,76 @@ double QLearn_reward(double gr[max_graph_size][4], int mouse_pos[1][2], int cats
     This function should return a maximim/minimum reward when the mouse eats/gets eaten respectively.      
    */
 
-   /***********************************************************************************************
-   * TO DO: Complete this function
-   ***********************************************************************************************/ 
+  // If mouse is on cheese return max
+  if (mouse_pos[0][0] == cheeses[0][0] && mouse_pos[0][1] == cheeses[0][1])
+  {
+    return MAX;
+  }
+  else if (mouse_pos[0][0] == cats[0][0] && mouse_pos[0][1] == cats[0][1])
+  {
+    // If mouse is on cat return -MAX
+    return -MAX;
+  }
+  else
+  {
+    // Else return a small reward calculation
+    double util = 0;
+    int mouse_index = mouse_pos[0][0] + (mouse_pos[0][1] * size_X);
 
-  return(0);		// <--- of course, you will change this as well!     
+    // If mouse is besides the cat, also really bad utility value
+    // If cat is above mouse
+    if (cats[0][0] == mouse_pos[0][0] && cats[0][1] == mouse_pos[0][1] - 1 && gr[mouse_index][0] == 1.0)
+    {
+      util = -300.0;
+    }
+    // If cat is right to the mouse
+    if (cats[0][0] == mouse_pos[0][0] + 1 && cats[0][1] == mouse_pos[0][1] && gr[mouse_index][1] == 1.0)
+    {
+      util = -300.0;
+    }
+    // If cat is under mouse
+    if (cats[0][0] == mouse_pos[0][0] && cats[0][1] == mouse_pos[0][1] + 1 && gr[mouse_index][2] == 1.0)
+    {
+      util = -300.0;
+    }
+    // If cat is left to mouse
+    if (cats[0][0] == mouse_pos[0][0] - 1 && cats[0][1] == mouse_pos[0][1] && gr[mouse_index][3] == 1.0)
+    {
+      util = -300.0;
+    }
+
+    // find the bfs from mouse to the cheese
+    int hattan_mouse_cheese = manhattan(mouse_pos, cheeses);
+    util -= hattan_mouse_cheese * 1.1;
+    // find the bfs from mouse to the cat
+    int hattan_mouse_cat = manhattan(mouse_pos, cats);
+    util += hattan_mouse_cat * 0.9;
+
+    int num_walls = 0;
+    double penalty = 0;
+
+    // Find the number of walls that are near the mouse
+    for (int j = 0; j < 4; j++)
+    {
+      if (gr[mouse_index][j] != 1.0)
+      {
+        num_walls += 1;
+      }
+    }
+    // If the mouse is in a dead end, penalty is really high
+    if (num_walls == 3)
+    {
+      penalty = 200.0;
+    }
+    else
+    {
+      // Otherwise it's a subtle penalty
+      penalty = num_walls * 0.5;
+    }
+    util -= penalty;
+
+    return (util); // <--- Obviously, this will be replaced by your computer utilities
+  }
 }
 
 void feat_QLearn_update(double gr[max_graph_size][4],double weights[25], double reward, int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], int size_X, int graph_size)
@@ -260,3 +363,8 @@ void maxQsa(double gr[max_graph_size][4],double weights[25],int mouse_pos[1][2],
  *  Add any functions needed to compute your features below 
  *                 ---->  THIS BOX <-----
  * *************************************************************************************************/
+
+int manhattan(int mouse_pos[1][2], int goal_pos[5][2])
+{
+  return (abs(goal_pos[0][0] - mouse_pos[0][0]) + abs(goal_pos[0][1] - mouse_pos[0][1]));
+}
