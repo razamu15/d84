@@ -200,7 +200,7 @@ double QLearn_reward(double gr[max_graph_size][4], int mouse_pos[1][2], int cats
   }
   else
   {
-    return -alpha;
+    return 0;
   }
 }
 

@@ -10,15 +10,15 @@ mark.
 
 ________________________________________________
 
-Student Name 1 (last, first):
+Student Name 1 (last, first): Yang, Zongye
 
 Student Name 2 (last, first):
 
-Student number 1:
+Student number 1: 1004453423
 
 Student number 2:
 
-UTORid 1:
+UTORid 1: yangzon7
 
 UTORid 2:
 
@@ -28,7 +28,7 @@ READ THIS AND SIGN YOUR NAME AT THE END:
 honesty and plaguarism. All work submitted as part
 of this assignment is my own.
 
-	Signed: _(student 1 name here)__	_(student 2 name here)__
+	Signed: _Zongye Yang__	_(student 2 name here)__
 
 
 (-5 marks for failing to provide the identifying
@@ -41,6 +41,10 @@ but explain carefully when needed.
 1 .- (1 mark) Explain your reward function. What game elements
       are used, and why you think this is a good reward function
       for this problem.
+     The reward function takes into account whether the current state
+     is a terminal node, such as when mouse is on the cheese, it returns the max
+     reward. When the cat is on the mouse, it returns the minimum reward.
+     Otherwise, the reward function returns 0 so it still needs to be explored.
 
 2 .- These are multiple experiments (once you are sure your 
      QLearning code is working!) 
@@ -51,52 +55,70 @@ but explain carefully when needed.
      (1 mark) # Experiment 1, 10000 training trials, 20 rounds, random seed 1522,
      # 8x8 grid, cat-smartness .9
 
-     Initial mouse winning rate (first rate obtained when training starts):
+     Initial mouse winning rate (first rate obtained when training starts): 6.3%
 
      Train your mouse, and once trained, run the evaluation and  
-     record the mouse winning rate:
+     record the mouse winning rate: 74.2%
 
      (1 mark) # Experiment 2, 1000000 training trials, 50 rounds, random seed 1522,
      # 8x8 grid, cat-smartness .9
 
-     Initial mouse winning rate (first rate obtained when training starts):
+     Initial mouse winning rate (first rate obtained when training starts): 6.6%
 
      Train your mouse, and once trained, run the evaluation and  
-     record the mouse winning rate:
+     record the mouse winning rate: 91.2%
 
      (1 mark) Would the mouse keep improving and become invincible if
-     you ran, say, 100,000,000 training rounds per batch?     
+     you ran, say, 100,000,000 training rounds per batch?
+     It's hard to tell. While I think the results would improve a bit, the
+     mouse would never truly become invincible, certain layouts of the maze makes it
+     hard for the mouse to win, and the behaviour of the cat is still an uncertain
+     variable.
 
 4 .- Using the QTable saved from Experiment 2 (NO re-training!)
 
      (1 mark) # Experiment 3 - Run the evaluation on the 8x8 grid, cat-smartness=.9,
      # but using the random seed 4289 for the game.
 	
-     Mouse Winning Rate:
+     Mouse Winning Rate: 40%
 
      (2 mark) # Experiment 4 - Run the evaluation on the 8x8 grid, cat-smartness=.9,
      # but using the random seed 31415 for the game.
 	
-     Mouse Winning Rate:
+     Mouse Winning Rate: 51%
 
-     Average rate for Experiement 3 and Experiment 4:
+     Average rate for Experiement 3 and Experiment 4: 40.7% and 51% respectively
 
      (1 mark) Compare with the rate obtained in experiment 2. What is happening here?
+     The QLearning was trained on the maze layout in experiment 2. But when the maze
+     changes and the mouse is in a new environment, the policy that the mouse has does
+     not apply for the new environment. The mouse should be trained again on the new seed.
 
 5 .- Understanding the effects of state space on learning ability:
 
      (1 mark) # Experiment 5 - Train your mouse on the 16x16 grid, using random seed
      # 1522, 1000000 trials, and 50 training rounds. Cat-smartness=.9
 
-     Initial mouse winning rate (first rate obtained when training starts):
+     Initial mouse winning rate (first rate obtained when training starts): 2.9%
 
-     Mouse Winning Rate (from evaluation after training):
+     Mouse Winning Rate (from evaluation after training): 47.8%
 
      (1 mark) Compare the final winning rate with that from Experiment 2, what can
      you say about the difference in winning rates?
+     The winning rate here is much lower than the one from Experiment 2. I can say that
+     the difference in winning rates here is due to the state space difference between
+     16x16 grid and 8x8 grid. Since there are many more states here, we need more rounds
+     and more moves per round to explore more states and actions and generate
+     a good policy for the mouse.
 
-6 .- (2 marks) Is standard Q-Learning a rasonable strategy for environments
+6 .- (2 marks) Is standard Q-Learning a reasonable strategy for environments
      that change constantly? discuss based on the above
+     I do not think standard Q-Learning is a reasonable strategy for environments that change constantly
+     such as this cat and mouse maze game. This is because key features like mouse location, cat location, wall
+     locations change variably between different seeds and this could cause a mouse with an outdated policy to
+     do poorly on the new one, as we saw with the difference in winning rate when we change the seed but keep the
+     old QTable from experiment 2. Standard Q-Learning works best for static environments.
+
 
 7 .- (3 marks) Explain your feature set for feature-based Q Learning, and
                explain why and how each feature is expected to contribute
@@ -126,6 +148,12 @@ but explain carefully when needed.
      Compare this rate against the rate obtained in Experiment #5, what
      are your conclusions regarding the utility of feature-based
      Q-Learning?
+
+     the winrate between the feature based Q-Learning and standard Q-Learning are very
+     similar. this is because in this instance the state space for the 16x16 maze was small
+     enough that standard was able to keep up, but over time, because we have a lot less
+     computation in feature based, over time feature-based Q-Learning would outpace standard
+     when it comes to learning and improving because it can iterate alot faster.
 
      (1 mark) # Experiment 7, using the saved weights from Experiment 6 (no
      # re-training) run the evaluation using random seed 4289, same
@@ -204,13 +232,13 @@ doesn't work, or what problems exist.
 	
 			Complete/Working	Partial		Not done
 
-QLearn 
+QLearn                x
  update
 
-Reward
+Reward                x
  function
 
-Decide
+Decide                x
  action
 
 featureEval
