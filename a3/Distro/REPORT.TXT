@@ -102,15 +102,26 @@ but explain carefully when needed.
                explain why and how each feature is expected to contribute
 	       to helping your mouse win
 
+     1. the first feature is the total sum of the distances between the mouse and all
+     cheeses. This helps our mouse to win because it indicates to the mouse which 
+     moves move it closer to its goal of eating the cheeses and also if the mouse moves
+     further away from the cheeses thereby getting further away from its goal. 
+
+     2. the second feature the total sum of the distances between the mouse and all
+     cats. This helps our mouse to win because it indicates to the mouse which 
+     moves move it further away from cats so it can stay alive longer and attempt to
+     eat the cheese vs if it moves closer to the cats thereby increasing its chances 
+     of being eaten.
+
 8 .- Carry out the following experiments:
 
      (1 mark) # Experiment 6: Train your mouse using feature-based Q-Learning, on
      # the 16x16 grid, one cat, and one cheese, cat-smartness=.9,  
      # random seed = 1522, and use 1000000 trials and 50 rounds. 
 
-     Initial mouse winning rate (first rate obtained when training starts):
+     Initial mouse winning rate (first rate obtained when training starts): 0.033125
      
-     Mouse Winning Rate (from evaluation after training):
+     Mouse Winning Rate (from evaluation after training): 0.475564
 
      Compare this rate against the rate obtained in Experiment #5, what
      are your conclusions regarding the utility of feature-based
@@ -120,18 +131,26 @@ but explain carefully when needed.
      # re-training) run the evaluation using random seed 4289, same
      # 1 cheese, 1 cat, and cat-smartness=.9, 16x16 grid
 
-     Mouse Winning Rate (from evaluation after training):
+     Mouse Winning Rate (from evaluation after training): 0.521448
 
      (1 mark) # Experiment 8, using the saved weights from Experiment 6 (no
      # re-training) run the evaluation using random seed 31415, same
      # 1 cheese, 1 cat, and cat-smartness=.9, 16x16 grid
 
-     Mouse Winning Rate (from evaluation after training):
+     Mouse Winning Rate (from evaluation after training): 0.568401
 
      (1 mark) Comparing the winning rates from Experiments #7 and #8 against
      those from Experiment #6, what can you conclude about feature-
      based Q-Learning in terms of its ability to deal with changes 
      to the environment?
+     the winning rates from experiments 7 and 8 are very consistent with the winning rate
+     from experiment 6 which we used to train our weights. The results for all of them were
+     pretty similar despite the fact that our wights had never seen the mazes in experiments
+     6 and 7. This tells us that feature based q learning is good at adapting to changing 
+     environments because its not learning specific configuration like regular Qlearning, but
+     its learning based on abstracted features. because the same features can be calculated
+     for any configuration, feature based q learning results in a more adaptible solution That
+     perfoms consistently despite change. 
      
 9 .- Carry out the following experiments:
 
@@ -139,9 +158,9 @@ but explain carefully when needed.
      # the 16x16 grid, 2 cats, and 3 cheeses, cat-smartness=.9,  
      # random seed = 1522, and use 1000000 trials and 50 rounds. 
 
-     Initial mouse winning rate (first rate obtained when training starts):
+     Initial mouse winning rate (first rate obtained when training starts): 0.080290
      
-     Mouse Winning Rate (from evaluation after training):
+     Mouse Winning Rate (from evaluation after training): 0.274005
   
      (1 mark) # Experiment 9: Using the trained weights from Experiment 9, (no
      # re-training), run the evaluation on the 16x16 grid, 2 cats, 
@@ -153,16 +172,28 @@ but explain carefully when needed.
      # re-training), run the evaluation on the 32x32 grid, 2 cats, 
      # 3 cheeses, cat-smartness=.9, and random seed 4289
      
-     Mouse Winning Rate (from evaluation after training):
+     Mouse Winning Rate (from evaluation after training): 0.270677
 
      (2 marks) Based on the last 3 experiments, what can you conclude regarding
      the usefulness and applicability of standard Q-Learning vs. 
      feature-based Q-learning?
+     
+     standard-Q-Learning is better when the state space is small and the environment is not constantly changing. this is because qlearning learns a specific configuration and needs a
+     lot of memory so, if we have the computing power, or we need to stay in the same configuration then we will get better results using standard because we dont have to worry about 
+     configuration changing and we can explore the entire state space easily.
+     feature-based-Q-learning is better when the state space is really big or when there are changes or variability in the environement. this is because if the state space is too big
+     standard Q-Learning becomes statistically impossible, rendering any solution useless. if there is a lot of variablility, then feature based is better because it learns on a set of
+     abstracted features that be calculated for any environment, whereas standard learns for the good and bad states for a specific environment. in this scenario feature based will perform
+     better and more consistently.
 
 10 . - (2 marks) We obviously can not train an expensive robot by trial and error,
       How would you implement feature-based Q-learning for a mobile bot so you
       can take advantage of reinforcement learning but not spend millions on
       broken robots that keep falling down the stairs?
+      we can use feature based Q-learning to train a mobile robot without having to actually use it in a real trial and error situation and risking it breaking.
+      We can do so by picking a set of features that make sense for the robot/problem and them running the through q learning in a simlated environment. this allows us
+      to still be able to perform qlearning and increase the performance of our weights without actually using it in a real trial and error situation. And feature based
+      q learning is baesd on abstracted features we can expect similar and consistent performance of our bot when we eventually use it in the real world
       
       
 _____________________________________________________
