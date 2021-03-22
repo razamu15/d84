@@ -314,7 +314,7 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
     cheese_dist += temp;
     cheese_count += 1;
   }
-  features[0] = 1 / (1 + exp(-1*cheese_dist));
+  features[1] = 1 / (1 + exp(-1*cheese_dist));
 
   // FEATURE 2 MOUSE DISTANCE TO CATS
   int cat_count = 0;
@@ -324,7 +324,7 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
     cat_dist += temp;
     cat_count += 1;
   }
-  features[1] =  1 / (1 + exp(-1*cat_dist));
+  features[0] =  1 / (1 + exp(-1*cat_dist));
 
 
   // printf("calculated features,    mouse_cheese f1:%f    mouse_cats f2:%f\n", features[0], features[1]);
@@ -450,3 +450,193 @@ void maxQsa(double gr[max_graph_size][4], double weights[25], int mouse_pos[1][2
  *  Add any functions needed to compute your features below 
  *                 ---->  THIS BOX <-----
  * *************************************************************************************************/
+
+struct Node
+{
+	int x;
+	int y;
+	struct Node *next;
+};
+
+// The queue, front stores the front node of LL and rear stores the
+// last node of LL
+struct Queue
+{
+	struct Node *front, *rear;
+};
+
+// A utility function to create a new linked list node.
+struct Node *newNode(int x, int y)
+{
+	struct Node *temp = (struct Node *)malloc(sizeof(struct Node));
+	temp->x = x;
+	temp->y = y;
+	temp->next = NULL;
+	return temp;
+}
+
+// A utility function to create an empty queue
+struct Queue *createQ()
+{
+	struct Queue *q = (struct Queue *)malloc(sizeof(struct Queue));
+	q->front = q->rear = NULL;
+	return q;
+}
+
+// The function to add a key k to q
+void enQ(struct Queue *q, int x, int y)
+{
+	// Create a new LL node
+	struct Node *temp = newNode(x, y);
+
+	// If queue is empty, then new node is front and rear both
+	if (q->rear == NULL)
+	{
+		q->front = q->rear = temp;
+		return;
+	}
+
+	// Add the new node at the end of queue and change rear
+	q->rear->next = temp;
+	q->rear = temp;
+}
+
+// Function to remove a key from given queue q
+struct Node *deQ(struct Queue *q)
+{
+	// If queue is empty, return NULL.
+	if (q->front == NULL)
+		return (NULL);
+
+	// Store previous front and move front one node ahead
+	struct Node *result = q->front;
+
+	// free(q->front);
+	q->front = q->front->next;
+	// If front becomes NULL, then change rear also as NULL
+	if (q->front == NULL)
+		q->rear = NULL;
+
+	return (result);
+}
+
+// Function to check if a cat exists in the given location
+int cat_exists(int cat_loc[10][2], int cats, int x, int y)
+{
+	int i;
+	for (i = 0; i < cats; i++)
+	{
+		if ((cat_loc[i][0] == x) && (cat_loc[i][1] == y))
+		{
+			return 1;
+		}
+	}
+	return 0;
+}
+
+// Function to check if a cheese exists in the given location
+int cheese_exists(int cheese_loc[10][2], int cheeses, int x, int y)
+{
+	int i;
+	for (i = 0; i < cheeses; i++)
+	{
+		if ((cheese_loc[i][0] == x) && (cheese_loc[i][1] == y))
+		{
+			return 1;
+		}
+	}
+	return 0;
+}
+
+int bfs(double gr[max_graph_size][4], int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, int mouse_loc[1][2], int size_X)
+{
+	// create the predecessros array and set ii all to -1
+	int predecessors[max_graph_size];
+	int i;
+	for (i = 0; i < max_graph_size; i++)
+	{
+		predecessors[i] = -1;
+	}
+
+	// create and enqueue the mouse's location
+	struct Queue *Q = createQ();
+	enQ(Q, mouse_loc[0][0], mouse_loc[0][1]);
+	predecessors[mouse_loc[0][0] + (mouse_loc[0][1] * size_X)] = mouse_loc[0][0] + (mouse_loc[0][1] * size_X);
+
+	// declare variables for the loop
+	int order_counter = 1;
+	struct Node *cur_node;
+	int child_index;
+	int current_index = 0;
+	int cheese_index[2] = {-99, -99};
+	int cat_found = 0;
+
+	// loop through the queue
+	while (cheese_index[0] == -99)
+	{
+		// dequeue the next node
+		cur_node = deQ(Q);
+		if (cur_node == NULL)
+		{
+			break;
+		}
+
+		// check if the current node is a cheese node
+		if (cheese_exists(cheese_loc, cheeses, cur_node->x, cur_node->y) == 1)
+		{
+			cheese_index[0] = cur_node->x;
+			cheese_index[1] = cur_node->y;
+		}
+
+		current_index = cur_node->x + ((cur_node->y) * size_X);
+		// now go through the 4 children and add them to the queue if they qualify
+
+		// top neighbour
+		child_index = cur_node->x + ((cur_node->y - 1) * size_X);
+		if ((gr[current_index][0] == 1.0) && (predecessors[child_index] == -1))
+		{
+			predecessors[child_index] = current_index;
+			enQ(Q, cur_node->x, (cur_node->y - 1));
+		}
+
+		// right neighbour
+		child_index = (cur_node->x + 1) + ((cur_node->y) * size_X);
+		if ((gr[current_index][1] == 1.0) && (predecessors[child_index] == -1))
+		{
+			predecessors[child_index] = current_index;
+			enQ(Q, cur_node->x + 1, (cur_node->y));
+		}
+
+		// bottom neighbour
+		child_index = cur_node->x + ((cur_node->y + 1) * size_X);
+		if ((gr[current_index][2] == 1.0) && (predecessors[child_index] == -1))
+		{
+			predecessors[child_index] = current_index;
+			enQ(Q, cur_node->x, (cur_node->y + 1));
+		}
+
+		// left neighbour
+		child_index = (cur_node->x - 1) + (cur_node->y) * 32;
+		if ((gr[current_index][3] == 1.0) && (predecessors[child_index] == -1))
+		{
+			predecessors[child_index] = current_index;
+			enQ(Q, cur_node->x - 1, (cur_node->y));
+		}
+		free(cur_node);
+	}
+	free(Q);
+
+	// now build the path in reverse from the cheese to the mouse
+	int reverse_path[max_graph_size];
+	int mouse = mouse_loc[0][0] + mouse_loc[0][1] * 32;
+	int counter = 0;
+	reverse_path[0] = cheese_index[0] + cheese_index[1] * 32;
+	// first loop to build the path backwards
+	while (reverse_path[counter] != mouse)
+	{
+		reverse_path[counter + 1] = predecessors[reverse_path[counter]];
+		counter++;
+	}
+	return counter;
+}
+
