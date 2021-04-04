@@ -16,11 +16,11 @@ Student Name 2 (last, first):
 
 Student number 1: 1004453423
 
-Student number 2:
+Student number 2: 1004257127
 
 UTORid 1: yangzon7
 
-UTORid 2:
+UTORid 2: razamu15
 
 READ THIS AND SIGN YOUR NAME AT THE END:
 
@@ -28,7 +28,7 @@ READ THIS AND SIGN YOUR NAME AT THE END:
 honesty and plaguarism. All work submitted as part
 of this assignment is my own.
 
-	Signed: _Zongye Yang__	_(student 2 name here)__
+	Signed: _Zongye Yang__	_Muhammad Saad Raza__
 
 
 (-5 marks for failing to provide the identifying
