@@ -15,11 +15,11 @@ Student Name 1 (last, first):
 
 Student Name 2 (last, first):
 
-Student number 1:
+Student number 1: 1004257127
 
 Student number 2:
 
-UTORid 1:
+UTORid 1: razamu15
 
 UTORid 2:
 
@@ -29,7 +29,7 @@ READ THIS AND SIGN YOUR NAME AT THE END:
 honesty and plaguarism. All work submitted as part
 of this assignment is my own.
 
-    Signed: _(student 1 name)__      _(student 2 name)_
+    Signed: _Muhammad Saad Raza__      _(student 2 name)_
 
 
 (-5 marks for failing to provide the identifying
@@ -43,17 +43,70 @@ but explain carefully when needed.
                function. 
 
 	       Copy/paste the reported classification rates for:
-	 	
-	       Training data (last training round):
 
+		   Training data (last training round):
+				**** After 425000 iterations (50):
+				Digit 0, correct classification rate=0.938492
+				Digit 1, correct classification rate=0.968310
+				Digit 2, correct classification rate=0.789264
+				Digit 3, correct classification rate=0.822917
+				Digit 4, correct classification rate=0.875803
+				Digit 5, correct classification rate=0.668132
+				Digit 6, correct classification rate=0.938856
+				Digit 7, correct classification rate=0.883764
+				Digit 8, correct classification rate=0.744467
+				Digit 9, correct classification rate=0.748428
+				Average correct classification rate: 0.837843
+				Magnitude of largest network weight: 18.520732
 	       Testing data:
+		   		Digit 0, correct classification rate=0.958163
+				Digit 1, correct classification rate=0.969163
+				Digit 2, correct classification rate=0.798450
+				Digit 3, correct classification rate=0.858416
+				Digit 4, correct classification rate=0.872709
+				Digit 5, correct classification rate=0.674888
+				Digit 6, correct classification rate=0.924843
+				Digit 7, correct classification rate=0.881323
+				Digit 8, correct classification rate=0.788501
+				Digit 9, correct classification rate=0.797820
+				Average correct classification rate: 0.852428
 
 2 .- (1 marks) Repeat the process using the hyperbolic tangent activation
 	       function.
 
+		   Training data (last training round):
+				**** After 290000 iterations (50):
+				Digit 0, correct classification rate=0.940476
+				Digit 1, correct classification rate=0.987611
+				Digit 2, correct classification rate=0.800395
+				Digit 3, correct classification rate=0.823770
+				Digit 4, correct classification rate=0.885827
+				Digit 5, correct classification rate=0.737740
+				Digit 6, correct classification rate=0.921397
+				Digit 7, correct classification rate=0.887640
+				Digit 8, correct classification rate=0.777320
+				Digit 9, correct classification rate=0.807453
+				Average correct classification rate: 0.856963
+				Magnitude of largest network weight: 9.305126
+	       Testing data:
+		   		Digit 0, correct classification rate=0.964286
+				Digit 1, correct classification rate=0.978855
+				Digit 2, correct classification rate=0.781977
+				Digit 3, correct classification rate=0.857426
+				Digit 4, correct classification rate=0.925662
+				Digit 5, correct classification rate=0.695067
+				Digit 6, correct classification rate=0.914405
+				Digit 7, correct classification rate=0.882296
+				Digit 8, correct classification rate=0.781314
+				Digit 9, correct classification rate=0.740337
+				Average correct classification rate: 0.852162
+
 
 3 .- (1 marks) Which type of activation function yielded the best classification
 	       results? which one learned faster?
+
+		both the logistic and the hyperbolic activation functions yielded similar results but
+		the logists function learned faster.
 
 4 .- (1 marks) Train a 2-layer network with hyperbolic-tangent activation, using
 	       150 hidden units. Report the classification rates on training and
