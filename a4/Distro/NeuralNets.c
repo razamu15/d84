@@ -363,5 +363,5 @@ double logistic(double input)
 {
  // This function returns the value of the logistic function evaluated on input
  // TO DO: Implement this function!
- return(0);		// <--- Should return the value of the logistic function on the input 
+ return (1 / (1 + exp(-input)));		// <--- Should return the value of the logistic function on the input 
 }
