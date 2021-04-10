@@ -10,18 +10,18 @@ mark.
 
 ________________________________________________
 
-Student Name 1 (last, first):
+Student Name 1 (last, first): Raza, Muhammad
 
 
-Student Name 2 (last, first):
+Student Name 2 (last, first): Yang, Zongye
 
 Student number 1: 1004257127
 
-Student number 2:
+Student number 2: 1004453423
 
 UTORid 1: razamu15
 
-UTORid 2:
+UTORid 2: yangzon7
 
 READ THIS AND SIGN YOUR NAME AT THE END:
 
@@ -29,7 +29,7 @@ READ THIS AND SIGN YOUR NAME AT THE END:
 honesty and plaguarism. All work submitted as part
 of this assignment is my own.
 
-    Signed: _Muhammad Saad Raza__      _(student 2 name)_
+    Signed: _Muhammad Saad Raza__      _Zongye Yang_
 
 
 (-5 marks for failing to provide the identifying
@@ -110,11 +110,93 @@ but explain carefully when needed.
 
 4 .- (1 marks) Train a 2-layer network with hyperbolic-tangent activation, using
 	       150 hidden units. Report the classification rates on training and
-	       testing data just as for 1) and 2).	       
+	       testing data just as for 1) and 2).'
+
+			Training:
+			**** After 410000 iterations (50):
+			Digit 0, correct classification rate=0.992048
+			Digit 1, correct classification rate=0.985401
+			Digit 2, correct classification rate=0.973333
+			Digit 3, correct classification rate=0.971370
+			Digit 4, correct classification rate=0.981289
+			Digit 5, correct classification rate=0.983529
+			Digit 6, correct classification rate=0.986742
+			Digit 7, correct classification rate=0.974409
+			Digit 8, correct classification rate=0.981633
+			Digit 9, correct classification rate=0.964215
+			Average correct classification rate: 0.979397
+
+			Testing:
+			Digit 0, correct classification rate=0.990816
+			Digit 1, correct classification rate=0.987665
+			Digit 2, correct classification rate=0.962209
+			Digit 3, correct classification rate=0.950495
+			Digit 4, correct classification rate=0.975560
+			Digit 5, correct classification rate=0.945067
+			Digit 6, correct classification rate=0.971816
+			Digit 7, correct classification rate=0.950389
+			Digit 8, correct classification rate=0.953799
+			Digit 9, correct classification rate=0.924678
+			Average correct classification rate: 0.961250
+
 	       
 5 .- (1 marks) Same as 4), except use 10 hidden units instead
 
+	Training:
+	**** After 345000 iterations (50):
+	Digit 0, correct classification rate=0.985537
+	Digit 1, correct classification rate=0.973289
+	Digit 2, correct classification rate=0.902778
+	Digit 3, correct classification rate=0.898580
+	Digit 4, correct classification rate=0.942623
+	Digit 5, correct classification rate=0.870748
+	Digit 6, correct classification rate=0.951550
+	Digit 7, correct classification rate=0.950192
+	Digit 8, correct classification rate=0.931959
+	Digit 9, correct classification rate=0.912393
+	Average correct classification rate: 0.931965
+
+	Testing:
+	Digit 0, correct classification rate=0.986735
+	Digit 1, correct classification rate=0.982379
+	Digit 2, correct classification rate=0.887597
+	Digit 3, correct classification rate=0.914851
+	Digit 4, correct classification rate=0.928717
+	Digit 5, correct classification rate=0.801570
+	Digit 6, correct classification rate=0.932150
+	Digit 7, correct classification rate=0.900778
+	Digit 8, correct classification rate=0.885010
+	Digit 9, correct classification rate=0.897919
+	Average correct classification rate: 0.911771
+
 6 .- (1 marks) Same as 5), except use 3 hidden units instead
+
+	Training:
+	**** After 345000 iterations (50):
+	Digit 0, correct classification rate=0.975207
+	Digit 1, correct classification rate=0.971619
+	Digit 2, correct classification rate=0.317460
+	Digit 3, correct classification rate=0.215010
+	Digit 4, correct classification rate=0.407787
+	Digit 5, correct classification rate=0.131519
+	Digit 6, correct classification rate=0.957364
+	Digit 7, correct classification rate=0.877395
+	Digit 8, correct classification rate=0.218557
+	Digit 9, correct classification rate=0.886752
+	Average correct classification rate: 0.595867
+
+	Testing:
+	Digit 0, correct classification rate=0.971429
+	Digit 1, correct classification rate=0.985903
+	Digit 2, correct classification rate=0.437984
+	Digit 3, correct classification rate=0.052475
+	Digit 4, correct classification rate=0.421589
+	Digit 5, correct classification rate=0.000000
+	Digit 6, correct classification rate=0.930063
+	Digit 7, correct classification rate=0.819066
+	Digit 8, correct classification rate=0.015400
+	Digit 9, correct classification rate=0.831516
+	Average correct classification rate: 0.546543
 
 7 .- (3 marks) Comment on the experiments in 4, 5, and 6, and give your conclusion
 	       regarding the effect of the number of hidden units on classification
@@ -122,24 +204,37 @@ but explain carefully when needed.
 
 	       What is the network with 3 hidden telling you about this classification
 	       problem?
+	
+	From my observations, the more hidden units there are, the more accurate the classification will be.
+	The network with 3 hidden units have significantly less success rate than the other 2 experiments.
+	Which leads me to believe that 3 hidden units are not really enough for this classifier. The difference
+	between 10 units and 150 units isn't that huge, which leads me to believe that there are diminishing
+	returns as we add more hidden units.
+
 
 8 .- (3 marks) Train the best performing network you can. Use any activation function
 	       you wish, and set the number of hidden units so as to achieve the best
 	       performance.
 
-	       Number of hidden units used:
+	       Number of hidden units used: 250 
 
-	       Classification rate on testing data:
+	       Classification rate on testing data: 0.963397
 
 9 .- (3 marks) Describe how you would build a network to play the cat
 	        and mouse game (move the mouse to help it survive).
 
 		- Describe what the input is in terms of a vector of
 		  values
+		The input would be a vector of (mouse location, cat location, for each cell and for each direction whether there is a wall there, cheese location)
+		basically an encoding of the current maze layout and the game state.
 		- Describe what the output layer looks like (how many
 		  neurons and what they encode)
+		The output layer would look like 4 neurons which represent up, down, left, right all the directions that the mouse can move.
 		- Describe the error function
+		The error function would depend on whether the move we made was an optimal move, if the move is good for the mouse, it would be closer to the maximum
+		thresh hold of the function. Otherwise it would be close to the minimum.
 		- How many layers should you use?
+		I would use 4-5 layers because I think this problem is complex enough to require many layers to find the optimal moves. 
 _____________________________________________________
 
 Mark with an 'x' where appropriate. If something is only
@@ -148,23 +243,23 @@ doesn't work, or what problems exist.
 	
         	Complete/Working	Partial		Not done
 
-Logistic
+Logistic           x
  activation
  
-Tanh
+Tanh               x
  activation
 
-1L Feed-forward  
+1L Feed-forward    x
 
-1L Backprop
+1L Backprop        x
 
-1L Classify
+1L Classify        x
 
-2L Feed-forward
+2L Feed-forward    x
 
-2L Backprop
+2L Backprop        x
 
-2L Classify
+2L Classify        x
 _____________________________________________________
 
 Marking:

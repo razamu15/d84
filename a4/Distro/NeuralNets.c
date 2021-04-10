@@ -248,8 +248,12 @@ int train_2layer_net(double sample[INPUTS],int label,double (*sigmoid)(double in
   *          You will need to complete feedforward_2layer(), backprop_2layer(), and logistic() in order to
   *          be able to complete this function.
   ***********************************************************************************************************/
-  
-  return(0);		// <--- Should return the class for this sample  
+
+  double h_activations[units];
+  double activations[OUTPUTS];
+  feedforward_2layer(sample, sigmoid, weights_ih, weights_ho, h_activations, activations, units);
+  backprop_2layer(sample, h_activations, activations, sigmoid, label, weights_ih, weights_ho, units);
+  return classify_2layer(sample, label, sigmoid, units, weights_ih, weights_ho); // <--- Should return the class for this sample
 }
 
 int classify_2layer(double sample[INPUTS],int label,double (*sigmoid)(double input), int units, double weights_ih[INPUTS][MAX_HIDDEN], double weights_ho[MAX_HIDDEN][OUTPUTS])
@@ -283,9 +287,25 @@ int classify_2layer(double sample[INPUTS],int label,double (*sigmoid)(double inp
   *          be able to complete this function.
   ***********************************************************************************************************/
 
-  return(0);		// <--- Should return the class for this sample  
-}
+  double h_activations[units];
+  double activations[OUTPUTS];
+  double max;
+  int maxIdx;
+  feedforward_2layer(sample, sigmoid, weights_ih, weights_ho, h_activations, activations, units);
 
+  max = activations[0];
+  maxIdx = 0;
+  for (int i = 1; i < OUTPUTS; i++)
+  {
+    if (activations[i] > max)
+    {
+      max = activations[i];
+      maxIdx = i;
+    }
+  }
+
+  return maxIdx; // <--- Should return the class for this sample
+}
 
 void feedforward_2layer(double sample[INPUTS], double (*sigmoid)(double input), double weights_ih[INPUTS][MAX_HIDDEN], double weights_ho[MAX_HIDDEN][OUTPUTS], double h_activations[MAX_HIDDEN],double activations[OUTPUTS], int units)
 {
@@ -320,7 +340,29 @@ void feedforward_2layer(double sample[INPUTS], double (*sigmoid)(double input), 
    *                  the scaling factor has to be adjusted by the factor
    *                  SIGMOID_SCALE*(MAX_HIDDEN/units).
    **************************************************************************************************/
-  
+
+  // Calculate the hidden layer activations first
+  double summation;
+  for (int i = 0; i < units; i++)
+  {
+    summation = 0;
+    for (int j = 0; j < INPUTS; j++)
+    {
+      summation += weights_ih[j][i] * sample[j];
+    }
+    h_activations[i] = sigmoid(summation * SIGMOID_SCALE);
+  }
+
+  // Now calculate the output layer
+  for (int k = 0; k < OUTPUTS; k++)
+  {
+    summation = 0;
+    for (int l = 0; l < units; l++)
+    {
+      summation += weights_ho[l][k] * h_activations[l];
+    }
+    activations[k] = sigmoid(summation * SIGMOID_SCALE * (MAX_HIDDEN / units));
+  }
 }
 
 void backprop_2layer(double sample[INPUTS],double h_activations[MAX_HIDDEN], double activations[OUTPUTS], double (*sigmoid)(double input), int label, double weights_ih[INPUTS][MAX_HIDDEN], double weights_ho[MAX_HIDDEN][OUTPUTS], int units)
@@ -356,7 +398,88 @@ void backprop_2layer(double sample[INPUTS],double h_activations[MAX_HIDDEN], dou
     *        the network. You will need to find a way to figure out which sigmoid function you're
     *        using. Then use the procedure discussed in lecture to compute weight updates.
     * ************************************************************************************************/
-   
+
+  double derivative;
+  double derivative2;
+  double target[OUTPUTS];
+  double summation;
+  double og_weights_ho[units][OUTPUTS];
+
+  // Determine the target values for the output nodes
+  for (int i = 0; i < OUTPUTS; i++)
+  {
+    if (sigmoid == logistic)
+    {
+      if (label == i)
+      {
+        target[i] = 0.8;
+      }
+      else
+      {
+        target[i] = 0.2;
+      }
+    }
+    else
+    {
+      if (label == i)
+      {
+        target[i] = 0.8;
+      }
+      else
+      {
+        target[i] = -0.8;
+      }
+    }
+  }
+
+  // First update the weights of hidden to output
+  for (int i = 0; i < OUTPUTS; i++)
+  {
+    if (sigmoid == logistic)
+    {
+      derivative = activations[i] * (1.0 - activations[i]);
+    }
+    else
+    {
+      derivative = 1.0 - (pow(activations[i], 2));
+    }
+    for (int j = 0; j < units; j++)
+    {
+      og_weights_ho[j][i] = weights_ho[j][i];
+      weights_ho[j][i] += (ALPHA * h_activations[j] * derivative * (target[i] - activations[i]));
+    }
+  }
+
+  // Now update the weights of input to hidden
+  for (int i = 0; i < units; i++)
+  {
+    if (sigmoid == logistic)
+    {
+      derivative = h_activations[i] * (1.0 - h_activations[i]);
+    }
+    else
+    {
+      derivative = 1.0 - pow(h_activations[i], 2);
+    }
+    for (int j = 0; j < INPUTS; j++)
+    {
+      summation = 0;
+      for (int k = 0; k < OUTPUTS; k++)
+      {
+        if (sigmoid == logistic)
+        {
+          derivative2 = activations[k] * (1.0 - activations[k]);
+        }
+        else
+        {
+          derivative2 = 1.0 - (activations[k] * activations[k]);
+        }
+        summation += og_weights_ho[i][k] * derivative2 * (target[k] - activations[k]);
+      }
+
+      weights_ih[j][i] += ALPHA * sample[j] * derivative * summation;
+    }
+  }
 }
 
 double logistic(double input)
